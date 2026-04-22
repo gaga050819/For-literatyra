@@ -84,13 +84,6 @@
             animation: fadeInUp 0.5s ease-out backwards;
         }
         
-        .question:nth-child(1) { animation-delay: 0.1s; }
-        .question:nth-child(2) { animation-delay: 0.2s; }
-        .question:nth-child(3) { animation-delay: 0.3s; }
-        .question:nth-child(4) { animation-delay: 0.4s; }
-        .question:nth-child(5) { animation-delay: 0.5s; }
-        .question:nth-child(6) { animation-delay: 0.6s; }
-
         .question p { font-weight: bold; font-size: 1.1em; margin-top: 0; }
 
         label {
@@ -110,8 +103,6 @@
             border-color: #28a745;
             transform: scale(1.02);
         }
-
-        input[type="radio"] { margin-right: 10px; accent-color: #ff9a9e; }
 
         .score-header {
             display: flex;
@@ -203,10 +194,9 @@
 </div>
 
 <script type="module">
-    // 1. ОНОВЛЕНІ ІМПОРТИ (Додано Redirect функції)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-    import { getDatabase, ref, set, get, update } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+    import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyB7RvEg9vfp4Lo607QEBk4UmS_Y3bZ0KxA",
@@ -224,15 +214,18 @@
     const db = getDatabase(app);
     let currentUser = null;
 
+    // Обробка результату редиректу при завантаженні сторінки
     getRedirectResult(auth).then((result) => {
         if (result && result.user) {
             currentUser = result.user;
             checkStatus(currentUser.uid);
         }
-    }).catch(error => {
-        console.error("Помилка редиректу:", error);
+    }).catch((error) => {
+        console.error("Помилка авторизації:", error.code, error.message);
+        alert("Помилка: " + error.message);
     });
 
+    // Слухач стану сесії (автоматичний вхід)
     onAuthStateChanged(auth, (user) => {
         if (user && !currentUser) {
             currentUser = user;
@@ -240,11 +233,13 @@
         }
     });
 
+    // Кнопка логіну
     document.getElementById('login-btn').addEventListener('click', () => {
         const provider = new GoogleAuthProvider();
         signInWithRedirect(auth, provider);
     });
 
+    // Перевірка статусу гравця в БД
     function checkStatus(uid) {
         get(ref(db, 'results/' + uid)).then((snap) => {
             fadeOutAndHide('auth-section', () => {
@@ -257,17 +252,20 @@
         });
     }
 
+    // Підтвердження секретного коду
     document.getElementById('submit-code').addEventListener('click', () => {
-        if (document.getElementById('special-code').value.trim() === "KULISH2026") {
+        const codeInput = document.getElementById('special-code');
+        if (codeInput.value.trim() === "KULISH2026") {
             fadeOutAndHide('code-section', () => {
                 startQuiz();
             });
         } else { 
             alert("❌ Невірний код доступу!"); 
-            document.getElementById('special-code').value = '';
+            codeInput.value = '';
         }
     });
 
+    // Логіка тесту
     function startQuiz() {
         fadeInAndShow('quiz-section');
         document.getElementById('user-display').innerText = "👤 " + currentUser.displayName;
@@ -295,14 +293,15 @@
                     void scoreSpan.offsetWidth; 
                     scoreSpan.classList.add('score-anim');
                 }
+
                 update(ref(db, 'results/' + currentUser.uid), { score: currentScore });
             });
         });
     }
 
+    // Завершення тесту
     document.getElementById('finish-btn').addEventListener('click', () => {
-        const confirmFinish = confirm("Ви впевнені, що хочете завершити тест?");
-        if(confirmFinish) {
+        if(confirm("Ви впевнені, що хочете завершити тест?")) {
             update(ref(db, 'results/' + currentUser.uid), { finished: true }).then(() => {
                 alert("🎉 Результат успішно збережено!");
                 location.reload();
@@ -310,20 +309,28 @@
         }
     });
 
+    // Анімації
     function fadeOutAndHide(elementId, callback) {
         const el = document.getElementById(elementId);
         if(!el) return;
+        el.style.transition = 'opacity 0.3s ease';
         el.style.opacity = '0';
         setTimeout(() => {
             el.classList.add('hidden');
-            el.style.opacity = '1';
             if(callback) callback();
         }, 300);
     }
 
     function fadeInAndShow(elementId) {
         const el = document.getElementById(elementId);
-        if(el) el.classList.remove('hidden');
+        if(el) {
+            el.classList.remove('hidden');
+            el.style.opacity = '0';
+            setTimeout(() => {
+                el.style.transition = 'opacity 0.3s ease';
+                el.style.opacity = '1';
+            }, 10);
+        }
     }
 </script>
 </body>
