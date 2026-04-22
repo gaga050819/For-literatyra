@@ -194,9 +194,10 @@
 </div>
 
 <script type="module">
+    // 1. ПРАВИЛЬНІ ІМПОРТИ (БЕЗ 404)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-    import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.app/v1/firebase-database.js"; // Оновлений шлях до БД
+    import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyB7RvEg9vfp4Lo607QEBk4UmS_Y3bZ0KxA",
@@ -205,6 +206,7 @@
         storageBucket: "for-literatyra.firebasestorage.app",
         messagingSenderId: "397284064199",
         appId: "1:397284064199:web:1e89197505edc29b7cf7e2",
+        measurementId: "G-82KMRRFKRB",
         databaseURL: "https://for-literatyra-default-rtdb.europe-west1.firebasedatabase.app/" 
     };
 
@@ -213,56 +215,63 @@
     const db = getDatabase(app);
     let currentUser = null;
 
-    // Перевірка результату входу
-    getRedirectResult(auth)
-        .then((result) => {
-            if (result?.user) {
-                currentUser = result.user;
-                checkStatus(currentUser.uid);
-            }
-        })
-        .catch((error) => {
-            alert("Помилка входу: " + error.message);
-            console.error(error);
-        });
+    // 2. ОБРОБКА РЕЗУЛЬТАТУ ВХОДУ
+    getRedirectResult(auth).then((result) => {
+        if (result && result.user) {
+            currentUser = result.user;
+            checkStatus(currentUser.uid);
+        }
+    }).catch(error => {
+        console.error("Auth error:", error);
+        alert("Помилка авторизації: " + error.message);
+    });
 
-    // Слухач авторизації
+    // Автоматичний вхід
     onAuthStateChanged(auth, (user) => {
-        if (user) {
+        if (user && !currentUser) {
             currentUser = user;
             checkStatus(user.uid);
         }
     });
 
-    // Кнопка входу
+    // 3. КНОПКА ЛОГІНУ
     const loginBtn = document.getElementById('login-btn');
     if (loginBtn) {
-        loginBtn.onclick = () => {
+        loginBtn.addEventListener('click', () => {
             const provider = new GoogleAuthProvider();
-            // Додаємо кастомні параметри для кращої сумісності
-            provider.setCustomParameters({ prompt: 'select_account' });
             signInWithRedirect(auth, provider);
-        };
+        });
     }
 
     function checkStatus(uid) {
         get(ref(db, 'results/' + uid)).then((snap) => {
-            const authSec = document.getElementById('auth-section');
-            if (authSec) authSec.classList.add('hidden');
-            
-            if (snap.exists() && snap.val().finished) {
-                document.getElementById('code-section').classList.remove('hidden');
-            } else {
-                startQuiz();
-            }
-        }).catch(e => alert("Помилка БД: " + e.message));
+            fadeOutAndHide('auth-section', () => {
+                if (snap.exists() && snap.val().finished) {
+                    fadeInAndShow('code-section');
+                } else {
+                    startQuiz();
+                }
+            });
+        }).catch(err => {
+            console.error("DB error:", err);
+            alert("Помилка бази даних. Перевір консоль.");
+        });
     }
 
-    // Решта функцій (startQuiz, finish-btn і т.д.) залишаються як були
-    // ... (код з твого попереднього шаблону) ...
+    // РЕШТА ЛОГІКИ ТЕСТУ
+    document.getElementById('submit-code').addEventListener('click', () => {
+        if (document.getElementById('special-code').value.trim() === "KULISH2026") {
+            fadeOutAndHide('code-section', () => {
+                startQuiz();
+            });
+        } else { 
+            alert("❌ Невірний код доступу!"); 
+            document.getElementById('special-code').value = '';
+        }
+    });
 
     function startQuiz() {
-        document.getElementById('quiz-section').classList.remove('hidden');
+        fadeInAndShow('quiz-section');
         document.getElementById('user-display').innerText = "👤 " + currentUser.displayName;
         
         update(ref(db, 'results/' + currentUser.uid), {
@@ -270,8 +279,46 @@
             score: 0,
             finished: false
         });
-        
-        // ... логіка підрахунку балів ...
+
+        const scoreSpan = document.getElementById('current-score');
+        document.querySelectorAll('input[type=radio]').forEach(input => {
+            input.addEventListener('change', () => {
+                let currentScore = 0;
+                document.querySelectorAll('.question').forEach(q => {
+                    const correct = q.getAttribute('data-correct');
+                    const selected = q.querySelector('input:checked');
+                    if (selected && selected.value === correct) currentScore++;
+                });
+                
+                scoreSpan.innerText = currentScore;
+                update(ref(db, 'results/' + currentUser.uid), { score: currentScore });
+            });
+        });
+    }
+
+    document.getElementById('finish-btn').addEventListener('click', () => {
+        if(confirm("Завершити тест?")) {
+            update(ref(db, 'results/' + currentUser.uid), { finished: true }).then(() => {
+                alert("🎉 Збережено!");
+                location.reload();
+            });
+        }
+    });
+
+    function fadeOutAndHide(id, cb) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.style.opacity = '0';
+            setTimeout(() => { el.classList.add('hidden'); if(cb) cb(); }, 300);
+        }
+    }
+
+    function fadeInAndShow(id) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.classList.remove('hidden');
+            el.style.opacity = '1';
+        }
     }
 </script>
 </body>
