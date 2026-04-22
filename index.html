@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест: П. Куліш "Чорна рада"</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; padding: 20px; }
+        .hidden { display: none; }
+        .question { margin-bottom: 15px; }
+        button { padding: 10px 15px; background: #007BFF; color: white; border: none; cursor: pointer; border-radius: 5px; }
+        button:hover { background: #0056b3; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+
+    <h1>Тест: "Чорна рада"</h1>
+    
+    <div id="auth-section">
+        <p>Увійдіть через Google, щоб почати тест.</p>
+        <button id="login-btn">Увійти через Google</button>
+    </div>
+
+    <div id="code-section" class="hidden">
+        <p class="error">Ви вже проходили цей тест. Введіть спеціальний код для повторного доступу.</p>
+        <input type="text" id="special-code" placeholder="Введіть код">
+        <button id="submit-code">Підтвердити код</button>
+    </div>
+
+    <div id="quiz-section" class="hidden">
+        <h3 id="user-name-display"></h3>
+        <p>Поточний бал: <span id="current-score">0</span></p>
+        
+        <div id="questions-container">
+            <div class="question" data-correct="1">
+                <p>1. Яка історична подія лежить в основі роману "Чорна рада"?</p>
+                <label><input type="radio" name="q1" value="0"> Повстання Наливайка</label><br>
+                <label><input type="radio" name="q1" value="1"> Ніжинська рада 1663 року</label><br>
+                <label><input type="radio" name="q1" value="0"> Зборівська битва</label>
+            </div>
+            <div class="question" data-correct="1">
+                <p>2. Кого з героїв П. Куліш називає "ідеалом запорозького козака"?</p>
+                <label><input type="radio" name="q2" value="0"> Івана Брюховецького</label><br>
+                <label><input type="radio" name="q2" value="1"> Кирила Тура</label><br>
+                <label><input type="radio" name="q2" value="0"> Якима Сомка</label>
+            </div>
+            <div class="question" data-correct="1">
+                <p>3. Хто є уособленням народної мудрості та духовних цінностей у творі?</p>
+                <label><input type="radio" name="q3" value="0"> Михайло Черевань</label><br>
+                <label><input type="radio" name="q3" value="1"> Божий Чоловік</label><br>
+                <label><input type="radio" name="q3" value="0"> Петро Шрамченко</label>
+            </div>
+        </div>
+        <br>
+        <button id="finish-btn">Завершити тест</button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getDatabase, ref, set, get, update } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+        // ВСТАВ СВІЙ КОНФІГ ТУТ
+        const firebaseConfig = {
+            apiKey: "ТВІЙ_API_KEY",
+            authDomain: "ТВІЙ_ПРОЄКТ.firebaseapp.com",
+            databaseURL: "https://ТВІЙ_ПРОЄКТ-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "ТВІЙ_ПРОЄКТ",
+            storageBucket: "ТВІЙ_ПРОЄКТ.appspot.com",
+            messagingSenderId: "ТВІЙ_ID",
+            appId: "ТВІЙ_APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+        let currentUser = null;
+        let score = 0;
+
+        document.getElementById('login-btn').addEventListener('click', () => {
+            const provider = new GoogleAuthProvider();
+            signInWithPopup(auth, provider).then((result) => {
+                currentUser = result.user;
+                checkUserStatus(currentUser.uid);
+            });
+        });
+
+        function checkUserStatus(uid) {
+            get(ref(db, 'users/' + uid)).then((snapshot) => {
+                document.getElementById('auth-section').classList.add('hidden');
+                if (snapshot.exists() && snapshot.val().played === true) {
+                    document.getElementById('code-section').classList.remove('hidden');
+                } else {
+                    startQuiz();
+                }
+            });
+        }
+
+        document.getElementById('submit-code').addEventListener('click', () => {
+            const code = document.getElementById('special-code').value;
+            if (code === "KULISH2026") { // Спеціальний код доступу
+                document.getElementById('code-section').classList.add('hidden');
+                startQuiz();
+            } else {
+                alert("Невірний код!");
+            }
+        });
+
+        function startQuiz() {
+            document.getElementById('quiz-section').classList.remove('hidden');
+            document.getElementById('user-name-display').innerText = "Гравець: " + currentUser.displayName;
+            
+            // Ініціалізація гравця в БД
+            update(ref(db, 'users/' + currentUser.uid), {
+                name: currentUser.displayName,
+                score: 0,
+                played: false
+            });
+
+            // Слухач відповідей
+            document.querySelectorAll('input[type=radio]').forEach(radio => {
+                radio.addEventListener('change', calculateRealtimeScore);
+            });
+        }
+
+        function calculateRealtimeScore() {
+            let tempScore = 0;
+            document.querySelectorAll('.question').forEach(q => {
+                const correctVal = q.getAttribute('data-correct');
+                const selected = q.querySelector('input[type=radio]:checked');
+                if (selected && selected.value === correctVal) {
+                    tempScore++;
+                }
+            });
+            score = tempScore;
+            document.getElementById('current-score').innerText = score;
+            
+            // Відправка балів у реальному часі в БД
+            update(ref(db, 'users/' + currentUser.uid), { score: score });
+        }
+
+        document.getElementById('finish-btn').addEventListener('click', () => {
+            update(ref(db, 'users/' + currentUser.uid), { played: true }).then(() => {
+                alert(`Тест завершено! Твій результат: ${score}`);
+                document.getElementById('quiz-section').classList.add('hidden');
+            });
+        });
+    </script>
+</body>
+</html>
