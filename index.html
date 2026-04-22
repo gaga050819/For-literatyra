@@ -209,75 +209,63 @@
         databaseURL: "https://for-literatyra-default-rtdb.europe-west1.firebasedatabase.app/"
     };
 
-    // Ініціалізація
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getDatabase(app);
     let currentUser = null;
 
-    // 1. Перевірка результату після редиректу (спрацьовує при поверненні від Google)
-    getRedirectResult(auth)
-        .then((result) => {
-            if (result?.user) {
-                currentUser = result.user;
-                checkStatus(currentUser.uid);
-            }
-        })
-        .catch((error) => {
-            console.error("Помилка редиректу:", error);
-            alert("Помилка входу: " + error.message);
-        });
+    // 1. ЦЕЙ БЛОК ПРАЦЮЄ ПІСЛЯ НАТИСКАННЯ "ПРОДОВЖИТИ" В GOOGLE
+    getRedirectResult(auth).then((result) => {
+        if (result && result.user) {
+            handleAuthSuccess(result.user);
+        }
+    }).catch((error) => {
+        console.error("Помилка редиректу:", error);
+    });
 
-    // 2. Слухач стану (якщо вже залогінений)
+    // 2. СЛУХАЧ СТАНУ (якщо користувач вже залогінений раніше)
     onAuthStateChanged(auth, (user) => {
-        if (user && !currentUser) {
-            currentUser = user;
-            checkStatus(user.uid);
+        if (user) {
+            handleAuthSuccess(user);
         }
     });
 
-    // 3. Функція для кнопки входу
-    const loginBtn = document.getElementById('login-btn');
-    if (loginBtn) {
-        loginBtn.onclick = async () => {
-            try {
-                const provider = new GoogleAuthProvider();
-                // Примусовий вибір акаунту
-                provider.setCustomParameters({ prompt: 'select_account' });
-                await signInWithRedirect(auth, provider);
-            } catch (err) {
-                alert("Кнопка не спрацювала: " + err.message);
-            }
-        };
-    }
+    // 3. ФУНКЦІЯ, ЯКА ХОВАЄ КНОПКУ І ПОКАЗУЄ ТЕСТ
+    function handleAuthSuccess(user) {
+        currentUser = user;
+        console.log("Вхід успішний:", user.displayName);
+        
+        // Ховаємо секцію авторизації
+        const authSec = document.getElementById('auth-section');
+        if (authSec) authSec.classList.add('hidden');
 
-    // Перевірка бази даних
-    async function checkStatus(uid) {
-        try {
-            const snap = await get(ref(db, 'results/' + uid));
-            document.getElementById('auth-section').classList.add('hidden');
-            
+        // Перевіряємо в базі, чи не закінчив він тест раніше
+        get(ref(db, 'results/' + user.uid)).then((snap) => {
             if (snap.exists() && snap.val().finished) {
                 document.getElementById('code-section').classList.remove('hidden');
             } else {
                 startQuiz();
             }
-        } catch (err) {
-            alert("Помилка бази даних: " + err.message);
-        }
+        });
     }
+
+    // Кнопка входу
+    document.getElementById('login-btn').onclick = () => {
+        const provider = new GoogleAuthProvider();
+        signInWithRedirect(auth, provider);
+    };
 
     function startQuiz() {
         document.getElementById('quiz-section').classList.remove('hidden');
         document.getElementById('user-display').innerText = "👤 " + currentUser.displayName;
         
-        // Оновлення початкових даних
+        // Створюємо запис у БД
         update(ref(db, 'results/' + currentUser.uid), {
             name: currentUser.displayName,
             finished: false
         });
 
-        // Логіка квізу
+        // Логіка підрахунку балів
         const scoreSpan = document.getElementById('current-score');
         document.querySelectorAll('input[type=radio]').forEach(radio => {
             radio.onchange = () => {
@@ -293,23 +281,13 @@
         });
     }
 
-    // Кнопка фінішу
+    // Кнопка завершення
     document.getElementById('finish-btn').onclick = () => {
-        if(confirm("Завершити тест?")) {
+        if(confirm("Завершити тест? Дані будуть збережені.")) {
             update(ref(db, 'results/' + currentUser.uid), { finished: true }).then(() => {
-                alert("Успішно збережено!");
+                alert("Вітаємо! Результат збережено.");
                 location.reload();
             });
-        }
-    };
-
-    // Секретний код
-    document.getElementById('submit-code').onclick = () => {
-        if (document.getElementById('special-code').value.trim() === "KULISH2026") {
-            document.getElementById('code-section').classList.add('hidden');
-            startQuiz();
-        } else {
-            alert("❌ Код невірний");
         }
     };
 </script>
