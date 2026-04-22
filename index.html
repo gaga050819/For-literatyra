@@ -203,8 +203,9 @@
 </div>
 
 <script type="module">
+    // 1. ОНОВЛЕНІ ІМПОРТИ (Додано Redirect функції)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import { getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
     import { getDatabase, ref, set, get, update } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
     const firebaseConfig = {
@@ -227,17 +228,16 @@
         if (result && result.user) {
             currentUser = result.user;
             checkStatus(currentUser.uid);
-        } else {
-            // Якщо користувач вже залогінений (наприклад, оновив сторінку)
-            auth.onAuthStateChanged((user) => {
-                if (user) {
-                    currentUser = user;
-                    checkStatus(user.uid);
-                }
-            });
         }
     }).catch(error => {
         console.error("Помилка редиректу:", error);
+    });
+
+    onAuthStateChanged(auth, (user) => {
+        if (user && !currentUser) {
+            currentUser = user;
+            checkStatus(user.uid);
+        }
     });
 
     document.getElementById('login-btn').addEventListener('click', () => {
@@ -245,7 +245,6 @@
         signInWithRedirect(auth, provider);
     });
 
-    // Перевірка чи грав
     function checkStatus(uid) {
         get(ref(db, 'results/' + uid)).then((snap) => {
             fadeOutAndHide('auth-section', () => {
@@ -258,7 +257,6 @@
         });
     }
 
-    // Введення коду
     document.getElementById('submit-code').addEventListener('click', () => {
         if (document.getElementById('special-code').value.trim() === "KULISH2026") {
             fadeOutAndHide('code-section', () => {
@@ -270,7 +268,6 @@
         }
     });
 
-    // Старт тесту
     function startQuiz() {
         fadeInAndShow('quiz-section');
         document.getElementById('user-display').innerText = "👤 " + currentUser.displayName;
@@ -292,20 +289,17 @@
                     if (selected && selected.value === correct) currentScore++;
                 });
                 
-                // Анімація цифри балів при зміні
                 if (parseInt(scoreSpan.innerText) !== currentScore) {
                     scoreSpan.innerText = currentScore;
                     scoreSpan.classList.remove('score-anim');
-                    void scoreSpan.offsetWidth; // trigger reflow
+                    void scoreSpan.offsetWidth; 
                     scoreSpan.classList.add('score-anim');
                 }
-
                 update(ref(db, 'results/' + currentUser.uid), { score: currentScore });
             });
         });
     }
 
-    // Завершення
     document.getElementById('finish-btn').addEventListener('click', () => {
         const confirmFinish = confirm("Ви впевнені, що хочете завершити тест?");
         if(confirmFinish) {
@@ -316,20 +310,20 @@
         }
     });
 
-    // Допоміжні функції для плавної зміни блоків
     function fadeOutAndHide(elementId, callback) {
         const el = document.getElementById(elementId);
+        if(!el) return;
         el.style.opacity = '0';
         setTimeout(() => {
             el.classList.add('hidden');
             el.style.opacity = '1';
             if(callback) callback();
-        }, 300); // 300ms відповідає CSS transition
+        }, 300);
     }
 
     function fadeInAndShow(elementId) {
         const el = document.getElementById(elementId);
-        el.classList.remove('hidden');
+        if(el) el.classList.remove('hidden');
     }
 </script>
 </body>
