@@ -204,7 +204,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import { getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
     import { getDatabase, ref, set, get, update } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
     const firebaseConfig = {
@@ -223,16 +223,26 @@
     const db = getDatabase(app);
     let currentUser = null;
 
-    // Логін
-    document.getElementById('login-btn').addEventListener('click', () => {
-        const provider = new GoogleAuthProvider();
-        signInWithPopup(auth, provider).then((result) => {
+    getRedirectResult(auth).then((result) => {
+        if (result && result.user) {
             currentUser = result.user;
             checkStatus(currentUser.uid);
-        }).catch(error => {
-            console.error("Помилка авторизації:", error);
-            alert("Помилка входу. Спробуйте ще раз.");
-        });
+        } else {
+            // Якщо користувач вже залогінений (наприклад, оновив сторінку)
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    currentUser = user;
+                    checkStatus(user.uid);
+                }
+            });
+        }
+    }).catch(error => {
+        console.error("Помилка редиректу:", error);
+    });
+
+    document.getElementById('login-btn').addEventListener('click', () => {
+        const provider = new GoogleAuthProvider();
+        signInWithRedirect(auth, provider);
     });
 
     // Перевірка чи грав
