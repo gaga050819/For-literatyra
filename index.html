@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Тест: П. Куліш "Чорна рада"</title>
     <style>
-        /* Загальні стилі та фон */
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             margin: 0; 
@@ -18,7 +17,6 @@
             align-items: center;
         }
 
-        /* Ефект "рідкого скла" (Glassmorphism) */
         .glass-card {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(15px);
@@ -35,7 +33,6 @@
         h1 { text-align: center; margin-top: 0; text-shadow: 1px 1px 3px rgba(0,0,0,0.3); }
         .hidden { display: none !important; }
 
-        /* Анімації */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
@@ -47,7 +44,6 @@
             100% { transform: scale(1); }
         }
 
-        /* Кнопки */
         button { 
             width: 100%; 
             padding: 15px; 
@@ -67,7 +63,6 @@
             box-shadow: 0 6px 20px rgba(0,0,0,0.3);
         }
 
-        /* Поля вводу */
         input[type="text"] { 
             width: 100%; 
             padding: 12px; 
@@ -81,7 +76,6 @@
         input[type="text"]::placeholder { color: #ddd; }
         input[type="text"]:focus { outline: none; border-color: #fff; background: rgba(255,255,255,0.3); }
 
-        /* Блоки питань */
         .question { 
             margin-bottom: 25px; 
             padding: 20px; 
@@ -90,7 +84,6 @@
             animation: fadeInUp 0.5s ease-out backwards;
         }
         
-        /* Затримка анімації для кожного наступного питання */
         .question:nth-child(1) { animation-delay: 0.1s; }
         .question:nth-child(2) { animation-delay: 0.2s; }
         .question:nth-child(3) { animation-delay: 0.3s; }
@@ -100,7 +93,6 @@
 
         .question p { font-weight: bold; font-size: 1.1em; margin-top: 0; }
 
-        /* Радіокнопки (кастомні) */
         label {
             display: block;
             padding: 10px 15px;
@@ -113,7 +105,6 @@
         }
         label:hover { background: rgba(255,255,255,0.15); }
         
-        /* Стиль обраного варіанту */
         label:has(input:checked) {
             background: rgba(40, 167, 69, 0.4);
             border-color: #28a745;
@@ -122,7 +113,6 @@
 
         input[type="radio"] { margin-right: 10px; accent-color: #ff9a9e; }
 
-        /* Верхня панель статистики */
         .score-header {
             display: flex;
             justify-content: space-between;
@@ -138,7 +128,7 @@
             padding: 8px 15px;
             border-radius: 10px;
         }
-        .score-anim { animation: pulse 0.5s ease; } /* Клас для анімації зміни рахунку */
+        .score-anim { animation: pulse 0.5s ease; } 
     </style>
 </head>
 <body>
@@ -148,7 +138,7 @@
     
     <div id="auth-section">
         <p style="text-align:center; font-size: 1.1em;">Вітаємо! Увійдіть через Google, щоб система могла зарахувати ваші бали.</p>
-        <button id="login-btn">🚀 Увійти через Gmail</button>
+        <button id="login-btn">Увійти через Gmail</button>
     </div>
 
     <div id="code-section" class="hidden">
@@ -217,7 +207,6 @@
     import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
     import { getDatabase, ref, set, get, update } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-    // --- ВСТАВ СВІЙ DATABASE URL СЮДИ ---
     const firebaseConfig = {
         apiKey: "AIzaSyB7RvEg9vfp4Lo607QEBk4UmS_Y3bZ0KxA",
         authDomain: "for-literatyra.firebaseapp.com",
@@ -226,7 +215,7 @@
         messagingSenderId: "397284064199",
         appId: "1:397284064199:web:1e89197505edc29b7cf7e2",
         measurementId: "G-82KMRRFKRB",
-        databaseURL: "ВСТАВ_СЮДИ_URL_З_ВКЛАДКИ_REALTIME_DATABASE" 
+        databaseURL: "https://for-literatyra-default-rtdb.europe-west1.firebasedatabase.app/" 
     };
 
     const app = initializeApp(firebaseConfig);
