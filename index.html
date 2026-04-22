@@ -194,11 +194,11 @@
 </div>
 
 <script type="module">
-    // 1. ПРАВИЛЬНІ ІМПОРТИ (БЕЗ 404)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
     import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
+    // ПЕРЕВІРЕНИЙ КОНФІГ (БЕЗ ЗАЙВИХ СИМВОЛІВ)
     const firebaseConfig = {
         apiKey: "AIzaSyB7RvEg9vfp4Lo607QEBk4UmS_Y3bZ0KxA",
         authDomain: "for-literatyra.firebaseapp.com",
@@ -207,7 +207,7 @@
         messagingSenderId: "397284064199",
         appId: "1:397284064199:web:1e89197505edc29b7cf7e2",
         measurementId: "G-82KMRRFKRB",
-        databaseURL: "https://for-literatyra-default-rtdb.europe-west1.firebasedatabase.app/" 
+        databaseURL: "https://for-literatyra-default-rtdb.europe-west1.firebasedatabase.app/"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -215,18 +215,19 @@
     const db = getDatabase(app);
     let currentUser = null;
 
-    // 2. ОБРОБКА РЕЗУЛЬТАТУ ВХОДУ
+    // Обробка входу після редиректу
     getRedirectResult(auth).then((result) => {
-        if (result && result.user) {
+        if (result?.user) {
             currentUser = result.user;
             checkStatus(currentUser.uid);
         }
-    }).catch(error => {
-        console.error("Auth error:", error);
-        alert("Помилка авторизації: " + error.message);
+    }).catch((error) => {
+        console.error("Auth error:", error.code, error.message);
+        if (error.code === 'auth/api-key-not-valid') {
+            alert("Помилка: Невалідний API Key. Перевір налаштування проекту.");
+        }
     });
 
-    // Автоматичний вхід
     onAuthStateChanged(auth, (user) => {
         if (user && !currentUser) {
             currentUser = user;
@@ -234,92 +235,69 @@
         }
     });
 
-    // 3. КНОПКА ЛОГІНУ
+    // Кнопка логіну через перевірену функцію
     const loginBtn = document.getElementById('login-btn');
     if (loginBtn) {
-        loginBtn.addEventListener('click', () => {
-            const provider = new GoogleAuthProvider();
-            signInWithRedirect(auth, provider);
+        loginBtn.addEventListener('click', async () => {
+            try {
+                const provider = new GoogleAuthProvider();
+                await signInWithRedirect(auth, provider);
+            } catch (e) {
+                alert("Помилка запуску входу: " + e.message);
+            }
         });
     }
 
     function checkStatus(uid) {
         get(ref(db, 'results/' + uid)).then((snap) => {
-            fadeOutAndHide('auth-section', () => {
-                if (snap.exists() && snap.val().finished) {
-                    fadeInAndShow('code-section');
-                } else {
-                    startQuiz();
-                }
-            });
-        }).catch(err => {
-            console.error("DB error:", err);
-            alert("Помилка бази даних. Перевір консоль.");
+            const authSec = document.getElementById('auth-section');
+            if (authSec) authSec.classList.add('hidden');
+            
+            if (snap.exists() && snap.val().finished) {
+                document.getElementById('code-section').classList.remove('hidden');
+            } else {
+                startQuiz();
+            }
         });
     }
 
-    // РЕШТА ЛОГІКИ ТЕСТУ
-    document.getElementById('submit-code').addEventListener('click', () => {
-        if (document.getElementById('special-code').value.trim() === "KULISH2026") {
-            fadeOutAndHide('code-section', () => {
-                startQuiz();
-            });
-        } else { 
-            alert("❌ Невірний код доступу!"); 
-            document.getElementById('special-code').value = '';
-        }
-    });
-
+    // Твоя функція старту тесту
     function startQuiz() {
-        fadeInAndShow('quiz-section');
-        document.getElementById('user-display').innerText = "👤 " + currentUser.displayName;
+        const quizSec = document.getElementById('quiz-section');
+        if (quizSec) quizSec.classList.remove('hidden');
+        
+        document.getElementById('user-display').innerText = "👤 " + (currentUser.displayName || "Користувач");
         
         update(ref(db, 'results/' + currentUser.uid), {
             name: currentUser.displayName,
-            score: 0,
             finished: false
         });
 
+        // Додаємо обробку радіо-кнопок
         const scoreSpan = document.getElementById('current-score');
         document.querySelectorAll('input[type=radio]').forEach(input => {
-            input.addEventListener('change', () => {
+            input.onchange = () => {
                 let currentScore = 0;
                 document.querySelectorAll('.question').forEach(q => {
                     const correct = q.getAttribute('data-correct');
                     const selected = q.querySelector('input:checked');
                     if (selected && selected.value === correct) currentScore++;
                 });
-                
                 scoreSpan.innerText = currentScore;
                 update(ref(db, 'results/' + currentUser.uid), { score: currentScore });
-            });
+            };
         });
     }
 
-    document.getElementById('finish-btn').addEventListener('click', () => {
+    // Завершення
+    document.getElementById('finish-btn').onclick = () => {
         if(confirm("Завершити тест?")) {
             update(ref(db, 'results/' + currentUser.uid), { finished: true }).then(() => {
-                alert("🎉 Збережено!");
+                alert("Результат збережено!");
                 location.reload();
             });
         }
-    });
-
-    function fadeOutAndHide(id, cb) {
-        const el = document.getElementById(id);
-        if (el) {
-            el.style.opacity = '0';
-            setTimeout(() => { el.classList.add('hidden'); if(cb) cb(); }, 300);
-        }
-    }
-
-    function fadeInAndShow(id) {
-        const el = document.getElementById(id);
-        if (el) {
-            el.classList.remove('hidden');
-            el.style.opacity = '1';
-        }
-    }
+    };
 </script>
 </body>
 </html>
