@@ -199,7 +199,7 @@
     import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
     const firebaseConfig = {
-        apiKey: "AIzaSyB7RvEg9vfp4Lo6O7QEBk4UmS_Y3bZ0KxA",
+        apiKey: "AIzaSyB7RvEg9vfp4Lo607QEBk4UmS_Y3bZ0KxA",
         authDomain: "for-literatyra.firebaseapp.com",
         projectId: "for-literatyra",
         storageBucket: "for-literatyra.firebasestorage.app",
@@ -214,58 +214,58 @@
     const db = getDatabase(app);
     let currentUser = null;
 
-    // 1. ЦЕЙ БЛОК ПРАЦЮЄ ПІСЛЯ НАТИСКАННЯ "ПРОДОВЖИТИ" В GOOGLE
-    getRedirectResult(auth).then((result) => {
-        if (result && result.user) {
-            handleAuthSuccess(result.user);
-        }
-    }).catch((error) => {
-        console.error("Помилка редиректу:", error);
-    });
+    // Сховати все при завантаженні, щоб не "блимало"
+    const authSection = document.getElementById('auth-section');
+    const quizSection = document.getElementById('quiz-section');
+    const codeSection = document.getElementById('code-section');
 
-    // 2. СЛУХАЧ СТАНУ (якщо користувач вже залогінений раніше)
+    // 1. ПЕРЕВІРКА РЕЗУЛЬТАТУ РЕДИРЕКТУ
+    getRedirectResult(auth).then((result) => {
+        if (result?.user) {
+            handleUser(result.user);
+        }
+    }).catch(err => alert("Помилка авторизації: " + err.message));
+
+    // 2. СЛУХАЧ СТАНУ (спрацьовує автоматично)
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            handleAuthSuccess(user);
+            handleUser(user);
+        } else {
+            // Якщо не залогінений - показуємо кнопку входу
+            authSection.classList.remove('hidden');
         }
     });
 
-    // 3. ФУНКЦІЯ, ЯКА ХОВАЄ КНОПКУ І ПОКАЗУЄ ТЕСТ
-    function handleAuthSuccess(user) {
+    function handleUser(user) {
         currentUser = user;
-        console.log("Вхід успішний:", user.displayName);
+        authSection.classList.add('hidden'); // Ховаємо вхід
         
-        // Ховаємо секцію авторизації
-        const authSec = document.getElementById('auth-section');
-        if (authSec) authSec.classList.add('hidden');
-
-        // Перевіряємо в базі, чи не закінчив він тест раніше
+        // Перевірка в БД
         get(ref(db, 'results/' + user.uid)).then((snap) => {
             if (snap.exists() && snap.val().finished) {
-                document.getElementById('code-section').classList.remove('hidden');
+                codeSection.classList.remove('hidden');
             } else {
                 startQuiz();
             }
         });
     }
 
-    // Кнопка входу
+    // Кнопка логіну
     document.getElementById('login-btn').onclick = () => {
         const provider = new GoogleAuthProvider();
         signInWithRedirect(auth, provider);
     };
 
     function startQuiz() {
-        document.getElementById('quiz-section').classList.remove('hidden');
+        quizSection.classList.remove('hidden');
         document.getElementById('user-display').innerText = "👤 " + currentUser.displayName;
         
-        // Створюємо запис у БД
         update(ref(db, 'results/' + currentUser.uid), {
             name: currentUser.displayName,
             finished: false
         });
 
-        // Логіка підрахунку балів
+        // Логіка квізу
         const scoreSpan = document.getElementById('current-score');
         document.querySelectorAll('input[type=radio]').forEach(radio => {
             radio.onchange = () => {
@@ -281,13 +281,23 @@
         });
     }
 
-    // Кнопка завершення
+    // Завершити тест
     document.getElementById('finish-btn').onclick = () => {
-        if(confirm("Завершити тест? Дані будуть збережені.")) {
+        if(confirm("Зберегти результат?")) {
             update(ref(db, 'results/' + currentUser.uid), { finished: true }).then(() => {
-                alert("Вітаємо! Результат збережено.");
+                alert("Збережено!");
                 location.reload();
             });
+        }
+    };
+
+    // Секретний код
+    document.getElementById('submit-code').onclick = () => {
+        if (document.getElementById('special-code').value.trim() === "KULISH2026") {
+            codeSection.classList.add('hidden');
+            startQuiz();
+        } else {
+            alert("Код невірний");
         }
     };
 </script>
