@@ -4,147 +4,239 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Тест: П. Куліш "Чорна рада"</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            margin: 0; 
-            padding: 20px; 
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #0e0e0e;
+            --surface: #161616;
+            --border: #2a2a2a;
+            --text: #f0ede8;
+            --muted: #7a7a7a;
+            --accent: #c9a84c;
+            --success: #4caf50;
+            --danger: #e05c5c;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            background: var(--bg);
+            color: var(--text);
             min-height: 100vh;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: #fff;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
+            padding: 40px 20px;
         }
 
-        .glass-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-            border-radius: 20px;
-            padding: 30px;
+        .card {
             width: 100%;
-            max-width: 650px;
-            animation: fadeInUp 0.8s ease-out;
+            max-width: 620px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 40px;
+            animation: fadeIn 0.5s ease;
         }
 
-        h1 { text-align: center; margin-top: 0; text-shadow: 1px 1px 3px rgba(0,0,0,0.3); }
-        .hidden { display: none !important; }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(16px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        .hidden { display: none !important; }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.7rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 6px;
+            color: var(--text);
         }
 
-        button { 
-            width: 100%; 
-            padding: 15px; 
-            margin-top: 15px;
-            background: linear-gradient(45deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
-            color: #333;
-            font-weight: bold;
-            font-size: 16px;
-            border: none; 
-            border-radius: 10px; 
-            cursor: pointer; 
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        button:hover { 
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        .subtitle {
+            font-size: 0.8rem;
+            color: var(--muted);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
         }
 
-        input[type="text"] { 
-            width: 100%; 
-            padding: 12px; 
-            margin: 10px 0; 
-            border: 1px solid rgba(255,255,255,0.3); 
-            border-radius: 8px; 
-            background: rgba(255,255,255,0.2);
-            color: #fff;
-            box-sizing: border-box; 
+        /* AUTH */
+        .auth-desc {
+            font-size: 0.9rem;
+            color: var(--muted);
+            line-height: 1.7;
+            margin-bottom: 24px;
         }
-        input[type="text"]::placeholder { color: #ddd; }
-        input[type="text"]:focus { outline: none; border-color: #fff; background: rgba(255,255,255,0.3); }
 
-        .question { 
-            margin-bottom: 25px; 
-            padding: 20px; 
-            background: rgba(0, 0, 0, 0.2); 
-            border-radius: 12px; 
-            animation: fadeInUp 0.5s ease-out backwards;
-        }
-        
-        .question p { font-weight: bold; font-size: 1.1em; margin-top: 0; }
-
-        label {
-            display: block;
-            padding: 10px 15px;
-            margin: 5px 0;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 8px;
+        /* BUTTONS */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 14px 20px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            border: 1px solid var(--border);
+            border-radius: 3px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.2s;
+            background: transparent;
+            color: var(--text);
         }
-        label:hover { background: rgba(255,255,255,0.15); }
-        
-        label:has(input:checked) {
-            background: rgba(40, 167, 69, 0.4);
-            border-color: #28a745;
-            transform: scale(1.02);
+        .btn:hover { border-color: var(--accent); color: var(--accent); }
+        .btn-primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #0e0e0e;
+            font-weight: 600;
+        }
+        .btn-primary:hover { background: #d4b060; border-color: #d4b060; color: #0e0e0e; }
+        .btn-success {
+            background: transparent;
+            border-color: var(--success);
+            color: var(--success);
+            margin-top: 24px;
+        }
+        .btn-success:hover { background: var(--success); color: #0e0e0e; }
+
+        /* CODE SECTION */
+        .alert-box {
+            border: 1px solid var(--danger);
+            border-radius: 3px;
+            padding: 14px 16px;
+            font-size: 0.85rem;
+            color: var(--danger);
+            margin-bottom: 20px;
         }
 
-        .score-header {
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            transition: border-color 0.2s;
+        }
+        input[type="text"]::placeholder { color: var(--muted); }
+        input[type="text"]:focus { outline: none; border-color: var(--accent); }
+
+        /* QUIZ HEADER */
+        .quiz-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            padding-bottom: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
         }
-        .score-box { 
-            font-weight: bold; 
-            font-size: 1.3em; 
-            background: rgba(0,0,0,0.3);
-            padding: 8px 15px;
-            border-radius: 10px;
+        .user-name {
+            font-size: 0.8rem;
+            color: var(--muted);
         }
-        .score-anim { animation: pulse 0.5s ease; } 
+        .score-box {
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            color: var(--accent);
+            text-transform: uppercase;
+        }
+
+        /* QUESTIONS */
+        .question {
+            margin-bottom: 28px;
+            padding-bottom: 28px;
+            border-bottom: 1px solid var(--border);
+        }
+        .question:last-of-type { border-bottom: none; }
+
+        .question p {
+            font-size: 0.9rem;
+            font-weight: 500;
+            line-height: 1.6;
+            margin-bottom: 14px;
+            color: var(--text);
+        }
+
+        label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            margin-bottom: 6px;
+            border: 1px solid transparent;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: var(--muted);
+            transition: all 0.15s;
+        }
+        label:hover { color: var(--text); border-color: var(--border); }
+
+        label input[type="radio"] {
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border: 1px solid var(--muted);
+            border-radius: 50%;
+            flex-shrink: 0;
+            transition: all 0.15s;
+            position: relative;
+        }
+        label:has(input:checked) {
+            color: var(--text);
+            border-color: var(--accent);
+            background: rgba(201,168,76,0.06);
+        }
+        label:has(input:checked) input[type="radio"] {
+            border-color: var(--accent);
+            background: var(--accent);
+        }
+
+        @media (max-width: 480px) {
+            .card { padding: 24px 20px; }
+            h1 { font-size: 1.4rem; }
+        }
     </style>
 </head>
 <body>
+<div class="card">
+    <h1>"Чорна рада"</h1>
+    <p class="subtitle">Пантелеймон Куліш — тестування</p>
 
-<div class="glass-card">
-    <h1>"Чорна рада" – Тест</h1>
-    
     <div id="auth-section">
-        <p style="text-align:center; font-size: 1.1em;">Вітаємо! Увійдіть через Google, щоб система могла зарахувати ваші бали.</p>
-        <button id="login-btn">Увійти через Gmail</button>
+        <p class="auth-desc">Увійдіть через Google-акаунт, щоб система зарахувала ваші результати.</p>
+        <button class="btn btn-primary" id="login-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Увійти через Gmail
+        </button>
     </div>
 
     <div id="code-section" class="hidden">
-        <div style="background: rgba(217, 83, 79, 0.4); padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
-            <p style="margin: 0; font-weight: bold;">Ви вже проходили цей тест!</p>
-        </div>
-        <p>Для повторної спроби введіть секретний код:</p>
+        <div class="alert-box">Ви вже проходили цей тест.</div>
+        <p style="font-size:0.85rem; color:var(--muted); margin-bottom:14px;">Для повторної спроби введіть секретний код:</p>
         <input type="text" id="special-code" placeholder="Наприклад: KULISH2026">
-        <button id="submit-code">🔓 Підтвердити</button>
+        <button class="btn" id="submit-code">Підтвердити</button>
     </div>
 
     <div id="quiz-section" class="hidden">
-        <div class="score-header">
-            <span id="user-display" style="font-style: italic;">Гравець: ...</span>
-            <div class="score-box">Бали: <span id="current-score">0</span>/6</div>
+        <div class="quiz-header">
+            <span class="user-name" id="user-display">Гравець...</span>
+            <span class="score-box">Бали: <span id="current-score">0</span> / 6</span>
         </div>
 
         <div id="questions">
@@ -154,34 +246,29 @@
                 <label><input type="radio" name="q1" value="1"> Пантелеймон Куліш</label>
                 <label><input type="radio" name="q1" value="0"> Іван Франко</label>
             </div>
-
             <div class="question" data-correct="2">
                 <p>2. Де відбувається основна подія роману (сама рада)?</p>
                 <label><input type="radio" name="q2" value="0"> У Києві</label>
                 <label><input type="radio" name="q2" value="2"> У Ніжині</label>
                 <label><input type="radio" name="q2" value="0"> На Січі</label>
             </div>
-
             <div class="question" data-correct="1">
                 <p>3. Хто з героїв є "Божим чоловіком"?</p>
                 <label><input type="radio" name="q3" value="0"> Яким Сомко</label>
                 <label><input type="radio" name="q3" value="1"> Сліпий кобзар-перехожий</label>
                 <label><input type="radio" name="q3" value="0"> Михайло Черевань</label>
             </div>
-
             <div class="question" data-correct="3">
                 <p>4. Кого було обрано гетьманом на Чорній раді?</p>
                 <label><input type="radio" name="q4" value="0"> Якима Сомка</label>
                 <label><input type="radio" name="q4" value="0"> Васюту Золотаренка</label>
                 <label><input type="radio" name="q4" value="3"> Івана Брюховецького</label>
             </div>
-
             <div class="question" data-correct="1">
                 <p>5. Хто викрав Лесю Черевань, щоб врятувати її від шлюбу без любові?</p>
                 <label><input type="radio" name="q5" value="1"> Кирило Тур</label>
                 <label><input type="radio" name="q5" value="0"> Петро Шрамченко</label>
             </div>
-
             <div class="question" data-correct="2">
                 <p>6. Яка головна ідея твору?</p>
                 <label><input type="radio" name="q6" value="0"> Показ любовних пригод козаків</label>
@@ -189,13 +276,13 @@
             </div>
         </div>
 
-        <button id="finish-btn" style="background: linear-gradient(45deg, #43e97b 0%, #38f9d7 100%);">✅ Завершити тест</button>
+        <button class="btn btn-success" id="finish-btn">Завершити тест</button>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
     import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
     const firebaseConfig = {
@@ -212,82 +299,89 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getDatabase(app);
+
     let currentUser = null;
+    let authHandled = false;
 
-    // 1. ЦЕЙ БЛОК ПРАЦЮЄ ПІСЛЯ НАТИСКАННЯ "ПРОДОВЖИТИ" В GOOGLE
-    getRedirectResult(auth).then((result) => {
-        if (result && result.user) {
-            handleAuthSuccess(result.user);
-        }
-    }).catch((error) => {
-        console.error("Помилка редиректу:", error);
-    });
-
-    // 2. СЛУХАЧ СТАНУ (якщо користувач вже залогінений раніше)
+    // Слухач стану — спрацьовує якщо користувач вже залогінений
     onAuthStateChanged(auth, (user) => {
-        if (user) {
+        if (user && !authHandled) {
+            authHandled = true;
             handleAuthSuccess(user);
         }
     });
 
-    // 3. ФУНКЦІЯ, ЯКА ХОВАЄ КНОПКУ І ПОКАЗУЄ ТЕСТ
-    function handleAuthSuccess(user) {
-        currentUser = user;
-        console.log("Вхід успішний:", user.displayName);
-        
-        // Ховаємо секцію авторизації
-        const authSec = document.getElementById('auth-section');
-        if (authSec) authSec.classList.add('hidden');
-
-        // Перевіряємо в базі, чи не закінчив він тест раніше
-        get(ref(db, 'results/' + user.uid)).then((snap) => {
-            if (snap.exists() && snap.val().finished) {
-                document.getElementById('code-section').classList.remove('hidden');
-            } else {
-                startQuiz();
+    // Кнопка входу — popup замість redirect
+    document.getElementById('login-btn').onclick = async () => {
+        try {
+            const provider = new GoogleAuthProvider();
+            const result = await signInWithPopup(auth, provider);
+            if (result.user && !authHandled) {
+                authHandled = true;
+                handleAuthSuccess(result.user);
             }
-        });
-    }
-
-    // Кнопка входу
-    document.getElementById('login-btn').onclick = () => {
-        const provider = new GoogleAuthProvider();
-        signInWithRedirect(auth, provider);
+        } catch (err) {
+            if (err.code !== 'auth/popup-closed-by-user') {
+                console.error("Помилка входу:", err);
+            }
+        }
     };
+
+    async function handleAuthSuccess(user) {
+        currentUser = user;
+        document.getElementById('auth-section').classList.add('hidden');
+
+        const snap = await get(ref(db, 'results/' + user.uid));
+        if (snap.exists() && snap.val().finished) {
+            document.getElementById('code-section').classList.remove('hidden');
+        } else {
+            startQuiz();
+        }
+    }
 
     function startQuiz() {
         document.getElementById('quiz-section').classList.remove('hidden');
-        document.getElementById('user-display').innerText = "👤 " + currentUser.displayName;
-        
-        // Створюємо запис у БД
+        document.getElementById('user-display').innerText = currentUser.displayName;
+
         update(ref(db, 'results/' + currentUser.uid), {
             name: currentUser.displayName,
             finished: false
         });
 
-        // Логіка підрахунку балів
         const scoreSpan = document.getElementById('current-score');
         document.querySelectorAll('input[type=radio]').forEach(radio => {
             radio.onchange = () => {
-                let currentScore = 0;
+                let score = 0;
                 document.querySelectorAll('.question').forEach(q => {
                     const correct = q.getAttribute('data-correct');
                     const selected = q.querySelector('input:checked');
-                    if (selected && selected.value === correct) currentScore++;
+                    if (selected && selected.value === correct) score++;
                 });
-                scoreSpan.innerText = currentScore;
-                update(ref(db, 'results/' + currentUser.uid), { score: currentScore });
+                scoreSpan.innerText = score;
+                update(ref(db, 'results/' + currentUser.uid), { score });
             };
         });
     }
 
-    // Кнопка завершення
     document.getElementById('finish-btn').onclick = () => {
-        if(confirm("Завершити тест? Дані будуть збережені.")) {
+        if (confirm("Завершити тест? Результат буде збережено.")) {
             update(ref(db, 'results/' + currentUser.uid), { finished: true }).then(() => {
-                alert("Вітаємо! Результат збережено.");
+                alert("Результат збережено!");
                 location.reload();
             });
+        }
+    };
+
+    document.getElementById('submit-code').onclick = () => {
+        const code = document.getElementById('special-code').value.trim();
+        if (code === 'KULISH2026') {
+            update(ref(db, 'results/' + currentUser.uid), { finished: false }).then(() => {
+                document.getElementById('code-section').classList.add('hidden');
+                authHandled = false;
+                startQuiz();
+            });
+        } else {
+            alert("Невірний код.");
         }
     };
 </script>
