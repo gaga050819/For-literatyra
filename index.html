@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Тест: Біологія (8 клас)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -20,6 +20,16 @@
             --danger: #e05c5c;
         }
 
+        body.light-theme {
+            --bg: #fdfcfb;
+            --surface: #ffffff;
+            --border: #e2e2e2;
+            --text: #1a1a1a;
+            --muted: #707070;
+            --accent: #b5953b;
+            --accent-glow: rgba(181, 149, 59, 0.1);
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             font-weight: 300;
@@ -30,24 +40,21 @@
             justify-content: center;
             align-items: flex-start;
             padding: 40px 20px;
+            transition: background 0.3s ease;
         }
 
-        /* PROGRESS BAR */
-        .progress-container {
-            width: 100%;
-            height: 4px;
-            background: var(--border);
-            border-radius: 2px;
-            margin-bottom: 24px;
-            overflow: hidden;
-            position: relative;
-        }
-        .progress-bar {
-            height: 100%;
-            width: 0%;
-            background: var(--accent);
-            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 0 10px var(--accent-glow);
+        /* THEME TOGGLE */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            cursor: pointer;
+            z-index: 100;
+            color: var(--text);
         }
 
         .card {
@@ -68,226 +75,125 @@
 
         .hidden { display: none !important; }
 
-        h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.7rem;
-            font-weight: 600;
-            letter-spacing: -0.02em;
-            margin-bottom: 6px;
-            color: var(--text);
-        }
-
+        h1 { font-family: 'Playfair Display', serif; font-size: 1.7rem; margin-bottom: 6px; }
         .subtitle {
-            font-size: 0.8rem;
-            color: var(--muted);
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            margin-bottom: 32px;
-            padding-bottom: 24px;
+            font-size: 0.8rem; color: var(--muted); letter-spacing: 0.12em;
+            text-transform: uppercase; margin-bottom: 32px; padding-bottom: 24px;
             border-bottom: 1px solid var(--border);
         }
 
-        /* AUTH & BUTTONS */
-        .auth-desc { font-size: 0.9rem; color: var(--muted); line-height: 1.7; margin-bottom: 24px; }
-        
+        /* BUTTONS & INPUTS */
         .btn {
             display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-            width: 100%; padding: 14px 20px;
-            font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 500;
-            letter-spacing: 0.04em; border: 1px solid var(--border); border-radius: 4px;
-            cursor: pointer; transition: all 0.2s; background: transparent; color: var(--text);
+            width: 100%; padding: 14px; font-weight: 600; cursor: pointer;
+            border: 1px solid var(--border); border-radius: 4px;
+            background: transparent; color: var(--text); transition: all 0.2s;
         }
-        .btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
-        
-        .btn-primary { background: var(--accent); border-color: var(--accent); color: #0e0e0e; font-weight: 600; }
-        .btn-primary:hover { background: #d4b060; border-color: #d4b060; color: #0e0e0e; box-shadow: 0 4px 14px var(--accent-glow); }
-        
-        .btn-success { background: transparent; border-color: var(--success); color: var(--success); margin-top: 24px; }
-        .btn-success:hover { background: var(--success); color: #0e0e0e; box-shadow: 0 4px 14px rgba(76, 175, 80, 0.2); }
+        .btn-primary { background: var(--accent); border-color: var(--accent); color: #0e0e0e; }
+        .btn-success { border-color: var(--success); color: var(--success); margin-top: 24px; }
+        .btn-success:hover { background: var(--success); color: #fff; }
 
-        /* INPUTS */
-        .alert-box { border: 1px solid var(--danger); border-radius: 4px; padding: 14px 16px; font-size: 0.85rem; color: var(--danger); margin-bottom: 20px; background: rgba(224, 92, 92, 0.05); }
         input[type="text"] {
-            width: 100%; padding: 12px 14px; margin-bottom: 12px; background: var(--bg);
+            width: 100%; padding: 12px; margin-bottom: 12px; background: var(--bg);
             border: 1px solid var(--border); border-radius: 4px; color: var(--text);
-            font-family: 'Inter', sans-serif; font-size: 0.85rem; transition: all 0.2s;
         }
-        input[type="text"]:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-glow); }
 
-        /* QUIZ HEADER */
-        .quiz-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid var(--border);
-        }
-        .user-name { font-size: 0.8rem; color: var(--muted); }
-        .score-box { font-size: 0.85rem; font-weight: 500; letter-spacing: 0.06em; color: var(--accent); text-transform: uppercase; }
-        
-        /* SCORE ANIMATION */
-        @keyframes pop {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.3); color: #fff; }
-            100% { transform: scale(1); }
-        }
-        .score-pop { animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .alert-box { border: 1px solid var(--danger); border-radius: 4px; padding: 14px; color: var(--danger); margin-bottom: 20px; background: rgba(224, 92, 92, 0.05); }
+
+        /* PROGRESS */
+        .progress-container { width: 100%; height: 4px; background: var(--border); border-radius: 2px; margin-bottom: 24px; overflow: hidden; }
+        .progress-bar { height: 100%; width: 0%; background: var(--accent); transition: width 0.4s ease; }
 
         /* QUESTIONS */
-        .question {
-            margin-bottom: 32px; padding-bottom: 32px; border-bottom: 1px solid var(--border);
-            transition: opacity 0.3s ease;
-        }
+        .question { margin-bottom: 32px; padding-bottom: 32px; border-bottom: 1px solid var(--border); transition: 0.3s; }
         .question.answered { opacity: 0.6; }
-        .question.answered:hover { opacity: 1; }
-        .question:last-of-type { border-bottom: none; margin-bottom: 16px; }
-
-        .question p { font-size: 0.95rem; font-weight: 500; line-height: 1.6; margin-bottom: 16px; color: var(--text); }
+        .question p { font-weight: 500; margin-bottom: 16px; line-height: 1.6; }
 
         label {
-            display: flex; align-items: center; gap: 12px; padding: 12px 16px; margin-bottom: 8px;
+            display: flex; align-items: center; gap: 12px; padding: 12px;
             border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
-            font-size: 0.85rem; color: var(--muted); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            background: var(--bg);
+            margin-bottom: 8px; font-size: 0.9rem;
         }
-        label:hover { color: var(--text); border-color: var(--muted); transform: translateX(4px); }
+        label:has(input:checked) { background: var(--accent-glow); border-color: var(--accent); }
 
-        label input[type="radio"] {
-            appearance: none; width: 16px; height: 16px; border: 1px solid var(--muted);
-            border-radius: 50%; flex-shrink: 0; transition: all 0.2s; position: relative;
+        /* DIAGRAMS */
+        .diagram-box {
+            position: relative; background: #f0f0f0; border-radius: 8px;
+            margin: 15px 0; border: 1px solid var(--border); height: 220px;
         }
-        
-        label:has(input:checked) {
-            color: var(--text); border-color: var(--accent);
-            background: rgba(201,168,76,0.08);
-            transform: translateX(4px);
+        .hotspot {
+            position: absolute; background: rgba(201, 168, 76, 0.4);
+            border: 2px solid var(--accent); border-radius: 50%; cursor: pointer; transition: 0.2s;
         }
-        
-        label:has(input:checked) input[type="radio"] {
-            border-color: var(--accent); background: var(--accent);
-            box-shadow: inset 0 0 0 3px var(--bg);
-        }
+        .hotspot:hover { transform: scale(1.2); background: var(--accent); }
+        .hotspot.selected { background: var(--success); border-color: #fff; }
 
-        @media (max-width: 480px) {
-            .card { padding: 24px 20px; }
-            h1 { font-size: 1.4rem; }
-        }
+        .svg-img { width: 100%; height: 100%; padding: 10px; }
     </style>
 </head>
 <body>
+
+<button class="theme-toggle" id="theme-toggle" title="Змінити тему">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+</button>
+
 <div class="card">
     <h1>Анатомія та фізіологія</h1>
-    <p class="subtitle">Біологія 8 клас тест</p>
+    <p class="subtitle">Біологія 8 клас — Підсумковий тест</p>
 
     <div id="auth-section">
-        <p class="auth-desc">Увійдіть через Google-акаунт, щоб система зарахувала ваші результати.</p>
-        <button class="btn btn-primary" id="login-btn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-            Увійти через Gmail
-        </button>
+        <p style="margin-bottom: 20px; color: var(--muted);">Увійдіть через Google, щоб розпочати тест.</p>
+        <button class="btn btn-primary" id="login-btn">Увійти через Gmail</button>
     </div>
 
     <div id="code-section" class="hidden">
         <div class="alert-box">Ви вже проходили цей тест.</div>
-        <p style="font-size:0.85rem; color:var(--muted); margin-bottom:14px;">Для повторної спроби введіть код від вчителя:</p>
-        <input type="text" id="special-code" placeholder="Наприклад: BIO2026">
-        <button class="btn" id="submit-code">Підтвердити</button>
+        <p style="font-size:0.85rem; color:var(--muted); margin-bottom:14px;">Введіть код для повторної спроби:</p>
+        <input type="text" id="special-code" placeholder="BIO2026">
+        <button class="btn" id="submit-code">Підтвердити код</button>
     </div>
 
     <div id="quiz-section" class="hidden">
-        <div class="progress-container">
-            <div class="progress-bar" id="progress"></div>
-        </div>
+        <div class="progress-container"><div class="progress-bar" id="progress"></div></div>
         
-        <div class="quiz-header">
-            <span class="user-name" id="user-display">Гравець...</span>
-            <span class="score-box">Бали: <span id="current-score">0</span> / 12</span>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 0.85rem;">
+            <span id="user-display" style="color: var(--muted);"></span>
+            <span style="color: var(--accent); font-weight: 600;">Бали: <span id="current-score">0</span> / 14</span>
         </div>
 
         <div id="questions">
             <div class="question" data-correct="0">
-                <p>1. Яка система органів забезпечує газообмін між організмом і навколишнім середовищем?</p>
+                <p>1. Яка система органів забезпечує газообмін?</p>
                 <label><input type="radio" name="q1" value="0"> Дихальна система</label>
                 <label><input type="radio" name="q1" value="1"> Травна система</label>
-                <label><input type="radio" name="q1" value="2"> Кровоносна система</label>
-            </div>
-            
-            <div class="question" data-correct="2">
-                <p>2. Як називається рідка частина крові, що залишається після видалення формених елементів?</p>
-                <label><input type="radio" name="q2" value="0"> Лімфа</label>
-                <label><input type="radio" name="q2" value="1"> Тканинна рідина</label>
-                <label><input type="radio" name="q2" value="2"> Плазма</label>
             </div>
 
-            <div class="question" data-correct="1">
-                <p>3. Який відділ головного мозку насамперед відповідає за координацію рухів та рівновагу тіла?</p>
-                <label><input type="radio" name="q3" value="0"> Довгастий мозок</label>
-                <label><input type="radio" name="q3" value="1"> Мозочок</label>
-                <label><input type="radio" name="q3" value="2"> Проміжний мозок</label>
+            <div class="question interactive" id="q13" data-ans="left-ventricle">
+                <p>13. Інтерактив: Натисніть на <b>Лівий шлуночок</b> серця:</p>
+                <div class="diagram-box">
+                    <svg viewBox="0 0 200 200" class="svg-img">
+                        <path d="M100 30 C 60 30, 40 70, 40 110 C 40 160, 100 190, 100 190 C 100 190, 160 160, 160 110 C 160 70, 140 30, 100 30" fill="#ddd" stroke="#333"/>
+                        <line x1="100" y1="30" x2="100" y2="190" stroke="#333" stroke-dasharray="3"/>
+                    </svg>
+                    <div class="hotspot" data-value="right-v" style="top: 55%; left: 35%; width: 30px; height: 30px;"></div>
+                    <div class="hotspot" data-value="left-ventricle" style="top: 55%; left: 55%; width: 30px; height: 30px;"></div>
+                </div>
             </div>
 
-            <div class="question" data-correct="2">
-                <p>4. Скільки камер має серце людини?</p>
-                <label><input type="radio" name="q4" value="0"> Дві (передсердя і шлуночок)</label>
-                <label><input type="radio" name="q4" value="1"> Три (два передсердя і шлуночок)</label>
-                <label><input type="radio" name="q4" value="2"> Чотири (два передсердя і два шлуночки)</label>
-            </div>
-
-            <div class="question" data-correct="1">
-                <p>5. Як називаються судини, які несуть кров ВІД серця до органів і тканин?</p>
-                <label><input type="radio" name="q5" value="0"> Вени</label>
-                <label><input type="radio" name="q5" value="1"> Артерії</label>
-                <label><input type="radio" name="q5" value="2"> Капіляри</label>
-            </div>
-
-            <div class="question" data-correct="1">
-                <p>6. У якому відділі травної системи відбувається найінтенсивніше всмоктування поживних речовин у кров і лімфу?</p>
-                <label><input type="radio" name="q6" value="0"> У шлунку</label>
-                <label><input type="radio" name="q6" value="1"> У тонкому кишечнику</label>
-                <label><input type="radio" name="q6" value="2"> У товстому кишечнику</label>
-            </div>
-
-            <div class="question" data-correct="0">
-                <p>7. Яка залоза внутрішньої секреції вважається "диригентом" ендокринної системи, оскільки контролює роботу інших залоз?</p>
-                <label><input type="radio" name="q7" value="0"> Гіпофіз</label>
-                <label><input type="radio" name="q7" value="1"> Щитоподібна залоза</label>
-                <label><input type="radio" name="q7" value="2"> Підшлункова залоза</label>
-            </div>
-
-            <div class="question" data-correct="1">
-                <p>8. Скільки пар ребер є у скелеті грудної клітки людини в нормі?</p>
-                <label><input type="radio" name="q8" value="0"> 10 пар</label>
-                <label><input type="radio" name="q8" value="1"> 12 пар</label>
-                <label><input type="radio" name="q8" value="2"> 14 пар</label>
-            </div>
-
-            <div class="question" data-correct="1">
-                <p>9. Який фермент міститься в слині та починає процес розщеплення вуглеводів вже у ротовій порожнині?</p>
-                <label><input type="radio" name="q9" value="0"> Пепсин</label>
-                <label><input type="radio" name="q9" value="1"> Амілаза (птіалін)</label>
-                <label><input type="radio" name="q9" value="2"> Ліпаза</label>
-            </div>
-
-            <div class="question" data-correct="0">
-                <p>10. Що є структурно-функціональною одиницею нирки?</p>
-                <label><input type="radio" name="q10" value="0"> Нефрон</label>
-                <label><input type="radio" name="q10" value="1"> Нейрон</label>
-                <label><input type="radio" name="q10" value="2"> Остеон</label>
-            </div>
-
-            <div class="question" data-correct="2">
-                <p>11. Де саме в дихальних шляхах розташовані голосові зв'язки?</p>
-                <label><input type="radio" name="q11" value="0"> У носоглотці</label>
-                <label><input type="radio" name="q11" value="1"> У трахеї</label>
-                <label><input type="radio" name="q11" value="2"> У гортані</label>
-            </div>
-
-            <div class="question" data-correct="1">
-                <p>12. Який вітамін здатний утворюватися в шкірі людини під впливом ультрафіолетового (сонячного) випромінювання?</p>
-                <label><input type="radio" name="q12" value="0"> Вітамін C</label>
-                <label><input type="radio" name="q12" value="1"> Вітамін D</label>
-                <label><input type="radio" name="q12" value="2"> Вітамін B12</label>
+            <div class="question interactive" id="q14" data-ans="cerebellum">
+                <p>14. Інтерактив: Вкажіть на <b>Мозочок</b> на схемі мозку:</p>
+                <div class="diagram-box">
+                    <svg viewBox="0 0 200 150" class="svg-img">
+                        <ellipse cx="100" cy="60" rx="70" ry="45" fill="#ddd" stroke="#333" />
+                        <path d="M110 105 Q 140 110, 150 90" fill="none" stroke="#333" stroke-width="2"/>
+                    </svg>
+                    <div class="hotspot" data-value="cortex" style="top: 20%; left: 45%; width: 35px; height: 35px;"></div>
+                    <div class="hotspot" data-value="cerebellum" style="top: 60%; left: 65%; width: 30px; height: 30px;"></div>
+                </div>
             </div>
         </div>
 
-        <button class="btn btn-success" id="finish-btn">Завершити та зберегти результат</button>
+        <button class="btn btn-success" id="finish-btn">Завершити та зберегти</button>
     </div>
 </div>
 
@@ -303,7 +209,6 @@
         storageBucket: "for-literatyra.firebasestorage.app",
         messagingSenderId: "397284064199",
         appId: "1:397284064199:web:1e89197505edc29b7cf7e2",
-        measurementId: "G-82KMRRFKRB",
         databaseURL: "https://for-literatyra-default-rtdb.europe-west1.firebasedatabase.app/"
     };
 
@@ -313,35 +218,28 @@
 
     let currentUser = null;
     let authHandled = false;
-    const TOTAL_QUESTIONS = 12;
+    const TOTAL_QUESTIONS = 14;
+
+    // Перемикач теми
+    document.getElementById('theme-toggle').onclick = () => document.body.classList.toggle('light-theme');
 
     onAuthStateChanged(auth, (user) => {
         if (user && !authHandled) {
             authHandled = true;
-            handleAuthSuccess(user);
+            checkUserStatus(user);
         }
     });
 
     document.getElementById('login-btn').onclick = async () => {
-        try {
-            const provider = new GoogleAuthProvider();
-            const result = await signInWithPopup(auth, provider);
-            if (result.user && !authHandled) {
-                authHandled = true;
-                handleAuthSuccess(result.user);
-            }
-        } catch (err) {
-            if (err.code !== 'auth/popup-closed-by-user') {
-                console.error("Помилка входу:", err);
-            }
-        }
+        const result = await signInWithPopup(auth, new GoogleAuthProvider());
+        if (result.user) checkUserStatus(result.user);
     };
 
-    async function handleAuthSuccess(user) {
+    async function checkUserStatus(user) {
         currentUser = user;
         document.getElementById('auth-section').classList.add('hidden');
-
         const snap = await get(ref(db, 'results/' + user.uid));
+        
         if (snap.exists() && snap.val().finished) {
             document.getElementById('code-section').classList.remove('hidden');
         } else {
@@ -353,77 +251,71 @@
         document.getElementById('quiz-section').classList.remove('hidden');
         document.getElementById('user-display').innerText = currentUser.displayName;
 
-        update(ref(db, 'results/' + currentUser.uid), {
-            name: currentUser.displayName,
-            finished: false
-        });
-
-        const scoreSpan = document.getElementById('current-score');
-        const progressBar = document.getElementById('progress');
-        let previousScore = 0;
-
+        // Логіка радіо-кнопок
         document.querySelectorAll('input[type=radio]').forEach(radio => {
             radio.onchange = (e) => {
-                let score = 0;
-                let answeredCount = 0;
-                
-                // Візуальна зміна блоку питання
-                const questionBlock = e.target.closest('.question');
-                questionBlock.classList.add('answered');
+                e.target.closest('.question').classList.add('answered');
+                updateScore();
+            };
+        });
 
-                document.querySelectorAll('.question').forEach(q => {
-                    const correct = q.getAttribute('data-correct');
-                    const selected = q.querySelector('input:checked');
-                    if (selected) {
-                        answeredCount++;
-                        if (selected.value === correct) score++;
-                    }
-                });
-
-                // Оновлення прогресу
-                progressBar.style.width = `${(answeredCount / TOTAL_QUESTIONS) * 100}%`;
-
-                // Анімація балів при збільшенні
-                if (score > previousScore) {
-                    scoreSpan.classList.remove('score-pop');
-                    void scoreSpan.offsetWidth; // trigger reflow
-                    scoreSpan.classList.add('score-pop');
-                }
-                
-                scoreSpan.innerText = score;
-                previousScore = score;
-                
-                update(ref(db, 'results/' + currentUser.uid), { score });
+        // Логіка інтерактиву
+        document.querySelectorAll('.hotspot').forEach(spot => {
+            spot.onclick = function() {
+                const q = this.closest('.question');
+                q.querySelectorAll('.hotspot').forEach(s => s.classList.remove('selected'));
+                this.classList.add('selected');
+                q.classList.add('answered');
+                updateScore();
             };
         });
     }
 
-    document.getElementById('finish-btn').onclick = () => {
-        const answeredCount = document.querySelectorAll('input:checked').length;
-        if (answeredCount < TOTAL_QUESTIONS) {
-            if(!confirm(`Ви відповіли лише на ${answeredCount} з ${TOTAL_QUESTIONS} питань. Точно хочете завершити?`)) return;
-        } else {
-            if(!confirm("Завершити тест? Результат буде збережено.")) return;
-        }
+    function updateScore() {
+        let score = 0;
+        let answered = 0;
 
-        update(ref(db, 'results/' + currentUser.uid), { finished: true }).then(() => {
-            alert(`Ваш результат: ${document.getElementById('current-score').innerText} з 12! Дані збережено.`);
-            location.reload();
+        document.querySelectorAll('.question').forEach(q => {
+            if (q.classList.contains('interactive')) {
+                const sel = q.querySelector('.hotspot.selected');
+                if (sel) {
+                    answered++;
+                    if (sel.dataset.value === q.dataset.ans) score++;
+                }
+            } else {
+                const sel = q.querySelector('input:checked');
+                if (sel) {
+                    answered++;
+                    if (sel.value === q.dataset.correct) score++;
+                }
+            }
         });
-    };
+
+        document.getElementById('current-score').innerText = score;
+        document.getElementById('progress').style.width = `${(answered / TOTAL_QUESTIONS) * 100}%`;
+    }
 
     document.getElementById('submit-code').onclick = () => {
-        const code = document.getElementById('special-code').value.trim();
-        // Змінив код на відповідний біології
-        if (code === 'BIO2026') { 
+        if (document.getElementById('special-code').value.trim() === 'Supersecurecode') {
             update(ref(db, 'results/' + currentUser.uid), { finished: false, score: 0 }).then(() => {
                 document.getElementById('code-section').classList.add('hidden');
-                authHandled = false;
                 startQuiz();
             });
         } else {
-            alert("Невірний код. Спробуйте BIO2026.");
+            alert("Невірний код!");
         }
+    };
+
+    document.getElementById('finish-btn').onclick = () => {
+        const score = document.getElementById('current-score').innerText;
+        update(ref(db, 'results/' + currentUser.uid), { 
+            score: score, 
+            finished: true,
+            name: currentUser.displayName 
+        }).then(() => {
+            alert(`Результат ${score}/14 збережено!`);
+            location.reload();
+        });
     };
 </script>
 </body>
