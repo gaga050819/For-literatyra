@@ -3,18 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тест: Берлін — столиця Німеччини</title>
+    <title>Тест: Берлін</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
-            --bg: #0e0e0e;
-            --surface: #161616;
-            --border: #2a2a2a;
-            --text: #f0ede8;
-            --muted: #7a7a7a;
-            --accent: #c9a84c;
-            --accent-glow: rgba(201, 168, 76, 0.25);
+            --bg: #0e0e0e; --surface: #161616; --border: #2a2a2a;
+            --text: #f0ede8; --muted: #7a7a7a; --accent: #c9a84c;
         }
         body {
             font-family: 'Inter', sans-serif;
@@ -26,71 +21,51 @@
             padding: 40px 20px;
         }
         .card {
-            width: 100%;
-            max-width: 700px;
+            width: 100%; max-width: 720px;
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 8px;
             padding: 40px;
         }
-        h1 { font-family: 'Playfair Display', serif; font-size: 1.85rem; margin-bottom: 8px; }
-        .subtitle { color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 30px; }
+        h1 { font-family: 'Playfair Display', serif; font-size: 1.9rem; margin-bottom: 8px; }
+        .subtitle { color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 30px; }
 
-        .progress-container {
-            height: 6px; background: var(--border); border-radius: 3px; margin: 25px 0; overflow: hidden;
-        }
-        .progress-bar {
-            height: 100%; width: 0%; background: var(--accent); transition: width 0.5s;
-            box-shadow: 0 0 12px var(--accent-glow);
-        }
+        .progress-container { height: 6px; background: var(--border); border-radius: 3px; margin: 20px 0; overflow: hidden; }
+        .progress-bar { height: 100%; width: 0%; background: var(--accent); transition: width 0.4s ease; }
 
-        .question { margin-bottom: 35px; padding-bottom: 25px; border-bottom: 1px solid var(--border); }
+        .question { margin-bottom: 32px; padding-bottom: 25px; border-bottom: 1px solid var(--border); }
         .question:last-child { border-bottom: none; }
-        .question p { margin-bottom: 16px; font-weight: 500; line-height: 1.5; }
+        .question p { margin-bottom: 14px; font-weight: 500; }
 
         label {
             display: flex; align-items: center; gap: 12px; padding: 14px 16px;
             border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px;
-            cursor: pointer; transition: all 0.2s;
+            cursor: pointer; transition: 0.2s;
         }
         label:hover { border-color: var(--accent); }
-        label:has(input:checked) { border-color: var(--accent); background: rgba(201,168,76,0.12); }
-
-        /* Інтерактивні стилі */
-        .drag-container {
-            display: flex; flex-direction: column; gap: 10px; margin: 15px 0;
-        }
-        .draggable {
-            padding: 12px 16px; background: #1f1f1f; border: 1px solid var(--border);
-            border-radius: 6px; cursor: grab; user-select: none;
-        }
-        .drop-zone {
-            min-height: 140px; border: 2px dashed var(--muted); border-radius: 8px;
-            padding: 10px; margin: 15px 0;
-        }
-        .image-select {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin: 15px 0;
-        }
-        .image-option {
-            border: 3px solid transparent; border-radius: 8px; overflow: hidden; cursor: pointer;
-        }
-        .image-option.selected { border-color: var(--accent); }
+        label:has(input:checked) { border-color: var(--accent); background: rgba(201,168,76,0.1); }
 
         .btn {
-            width: 100%; padding: 16px; font-size: 1.05rem; font-weight: 600;
+            width: 100%; padding: 16px; font-size: 1.1rem; font-weight: 600;
             border-radius: 6px; cursor: pointer; margin-top: 20px;
         }
         .btn-primary { background: var(--accent); color: #0e0e0e; border: none; }
         .btn-success { background: transparent; border: 2px solid #4caf50; color: #4caf50; }
+
+        /* Інтерактивні */
+        .draggable { padding: 12px; background: #222; border: 1px solid #444; border-radius: 6px; margin: 6px 0; cursor: grab; }
+        .drop-zone { min-height: 160px; border: 2px dashed #555; border-radius: 8px; padding: 10px; margin: 15px 0; }
+        .image-option { border: 3px solid transparent; border-radius: 8px; cursor: pointer; }
+        .image-option.selected { border-color: var(--accent); }
     </style>
 </head>
 <body>
 <div class="card">
-    <h1>Берлін — місто історії та майбутнього</h1>
-    <p class="subtitle">Інтерактивний тест • 12 завдань</p>
+    <h1>Тест: Берлін</h1>
+    <p class="subtitle">Інтерактивний тест • 10 завдань</p>
 
     <div id="auth-section">
-        <p style="color:var(--muted); margin:20px 0;">Увійдіть, щоб результат потрапив у лідерборд</p>
+        <p style="margin:25px 0; color:var(--muted);">Увійдіть через Google, щоб результат потрапив у лідерборд</p>
         <button class="btn btn-primary" id="login-btn">Увійти через Google</button>
     </div>
 
@@ -99,13 +74,13 @@
             <div class="progress-bar" id="progress"></div>
         </div>
 
-        <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
-            <span id="user-display">Учень...</span>
-            <span>Бали: <strong id="current-score">0</strong>/12</span>
+        <div style="display:flex;justify-content:space-between;margin-bottom:20px;">
+            <span id="user-display">Користувач...</span>
+            <span>Бали: <strong id="current-score">0</strong>/10</span>
         </div>
 
         <div id="questions">
-            <!-- Звичайні питання з блокуванням -->
+            <!-- Питання 1 -->
             <div class="question" data-correct="0">
                 <p>1. Столицею якої країни є Берлін?</p>
                 <label><input type="radio" name="q1" value="0"> Німеччини</label>
@@ -113,43 +88,34 @@
                 <label><input type="radio" name="q1" value="2"> Польщі</label>
             </div>
 
+            <!-- Питання 2 -->
             <div class="question" data-correct="1">
                 <p>2. Яка річка протікає через Берлін?</p>
                 <label><input type="radio" name="q2" value="0"> Ельба</label>
                 <label><input type="radio" name="q2" value="1"> Шпрее</label>
-                <label><input type="radio" name="q2" value="2"> Дунай</label>
+                <label><input type="radio" name="q2" value="2"> Рейн</label>
             </div>
 
-            <!-- Інтерактивне 1: Drag & Drop -->
-            <div class="question" data-correct="drag">
-                <p>3. Розташуйте події в хронологічному порядку (перетягніть)</p>
-                <div class="drag-container" id="drag-items">
-                    <div class="draggable" data-order="1">Падіння Берлінської стіни</div>
-                    <div class="draggable" data-order="0">Об’єднання Німеччини</div>
-                    <div class="draggable" data-order="2">Відкриття аеропорту BER</div>
+            <!-- Drag & Drop -->
+            <div class="question" data-type="drag">
+                <p>3. Розташуйте події в хронологічному порядку (перетягніть у зону нижче):</p>
+                <div id="drag-items">
+                    <div class="draggable" draggable="true" data-order="1989">Падіння Берлінської стіни (1989)</div>
+                    <div class="draggable" draggable="true" data-order="1990">Об’єднання Німеччини (1990)</div>
+                    <div class="draggable" draggable="true" data-order="2020">Відкриття аеропорту BER (2020)</div>
                 </div>
                 <div class="drop-zone" id="drop-zone"></div>
             </div>
 
-            <!-- Інтерактивне 2: Вибір на зображенні -->
-            <div class="question" data-correct="brandenburg">
-                <p>4. Клікніть на Бранденбурзькі ворота</p>
-                <div class="image-select" id="image-select">
-                    <img src="https://picsum.photos/id/1015/300/200" class="image-option" data-value="brandenburg" alt="Бранденбурзькі ворота">
-                    <img src="https://picsum.photos/id/201/300/200" class="image-option" data-value="reichstag" alt="Рейхстаг">
-                    <img src="https://picsum.photos/id/301/300/200" class="image-option" data-value="tv-tower" alt="Телевежа">
+            <!-- Вибір зображення -->
+            <div class="question" data-type="image">
+                <p>4. Оберіть Бранденбурзькі ворота</p>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;">
+                    <img src="https://picsum.photos/id/1015/280/180" class="image-option" data-value="correct" alt="Бранденбурзькі ворота">
+                    <img src="https://picsum.photos/id/201/280/180" class="image-option" data-value="wrong" alt="Рейхстаг">
+                    <img src="https://picsum.photos/id/866/280/180" class="image-option" data-value="wrong" alt="Телевежа">
                 </div>
             </div>
-
-            <!-- Інше питання -->
-            <div class="question" data-correct="1">
-                <p>5. Який найвідоміший парк Берліна?</p>
-                <label><input type="radio" name="q5" value="0"> Англійський сад</label>
-                <label><input type="radio" name="q5" value="1"> Тіргартен</label>
-                <label><input type="radio" name="q5" value="2"> Центральний парк</label>
-            </div>
-
-            <!-- Додай ще питання за потребою... -->
         </div>
 
         <button class="btn btn-success" id="finish-btn">Завершити тест</button>
@@ -158,17 +124,35 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
     import { getDatabase, ref, update } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-    const firebaseConfig = { /* твій firebaseConfig */ };
+    const firebaseConfig = {
+        apiKey: "AIzaSyB7RvEg9vfp4Lo6O7QEBk4UmS_Y3bZ0KxA",
+        authDomain: "for-literatyra.firebaseapp.com",
+        projectId: "for-literatyra",
+        storageBucket: "for-literatyra.firebasestorage.app",
+        messagingSenderId: "397284064199",
+        appId: "1:397284064199:web:1e89197505edc29b7cf7e2",
+        databaseURL: "https://for-literatyra-default-rtdb.europe-west1.firebasedatabase.app/"
+    };
+
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getDatabase(app);
 
     let currentUser = null;
 
-    // Увійти
+    // Автоматичний вхід при перезавантаженні
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            currentUser = user;
+            document.getElementById('auth-section').classList.add('hidden');
+            document.getElementById('quiz-section').classList.remove('hidden');
+            document.getElementById('user-display').innerText = user.displayName;
+        }
+    });
+
     document.getElementById('login-btn').onclick = async () => {
         try {
             const provider = new GoogleAuthProvider();
@@ -177,25 +161,29 @@
             document.getElementById('auth-section').classList.add('hidden');
             document.getElementById('quiz-section').classList.remove('hidden');
             document.getElementById('user-display').innerText = currentUser.displayName;
-        } catch (e) { console.error(e); }
+        } catch (err) {
+            console.error(err);
+            alert("Помилка входу: " + err.message);
+        }
     };
 
-    // Блокування відповідей після вибору
-    function lockQuestion(question) {
-        const radios = question.querySelectorAll('input[type="radio"]');
-        radios.forEach(r => r.disabled = true);
-    }
+    // Блокування відповіді після вибору
+    document.addEventListener('change', (e) => {
+        if (e.target.type === 'radio') {
+            const question = e.target.closest('.question');
+            question.querySelectorAll('input[type="radio"]').forEach(r => r.disabled = true);
+        }
+    });
 
     // Drag & Drop
-    function initDragAndDrop() {
+    function setupDragAndDrop() {
         const items = document.querySelectorAll('.draggable');
         const dropZone = document.getElementById('drop-zone');
 
         items.forEach(item => {
-            item.draggable = true;
             item.addEventListener('dragstart', (e) => {
-                e.dataTransfer.setData('text', item.outerHTML);
-                setTimeout(() => item.style.opacity = '0.4', 0);
+                e.dataTransfer.setData('text/plain', item.outerHTML);
+                item.style.opacity = '0.5';
             });
             item.addEventListener('dragend', () => item.style.opacity = '1');
         });
@@ -203,12 +191,13 @@
         dropZone.addEventListener('dragover', e => e.preventDefault());
         dropZone.addEventListener('drop', e => {
             e.preventDefault();
-            dropZone.innerHTML += e.dataTransfer.getData('text');
+            const data = e.dataTransfer.getData('text/plain');
+            dropZone.innerHTML += data;
         });
     }
 
     // Вибір зображення
-    function initImageSelect() {
+    function setupImageSelect() {
         document.querySelectorAll('.image-option').forEach(img => {
             img.addEventListener('click', () => {
                 document.querySelectorAll('.image-option').forEach(i => i.classList.remove('selected'));
@@ -220,45 +209,58 @@
     // Підрахунок балів
     function calculateScore() {
         let score = 0;
+
         document.querySelectorAll('.question').forEach(q => {
-            if (q.dataset.correct === "drag") {
-                // простий чек для drag (можна покращити)
-                if (document.getElementById('drop-zone').children.length >= 2) score++;
-            } else if (q.dataset.correct === "brandenburg") {
-                if (document.querySelector('.image-option.selected')?.dataset.value === "brandenburg") score++;
-            } else {
+            if (q.querySelector('input[type="radio"]')) {
                 const selected = q.querySelector('input:checked');
                 if (selected && selected.value === q.dataset.correct) score++;
+            }
+            else if (q.dataset.type === "image") {
+                if (q.querySelector('.image-option.selected')?.dataset.value === "correct") score++;
+            }
+            else if (q.dataset.type === "drag") {
+                if (document.getElementById('drop-zone').children.length > 0) score++; // спрощена перевірка
             }
         });
         return score;
     }
 
+    // Оновлення прогресу і балів
+    function updateProgress() {
+        const answered = document.querySelectorAll('.question input:checked, .image-option.selected, #drop-zone .draggable').length;
+        const total = 4; // кількість завдань
+        document.getElementById('progress').style.width = `${(answered / total) * 100}%`;
+        document.getElementById('current-score').textContent = calculateScore();
+    }
+
     // Ініціалізація
-    document.addEventListener('DOMContentLoaded', () => {
-        initDragAndDrop();
-        initImageSelect();
+    document.getElementById('finish-btn').onclick = () => {
+        const score = calculateScore();
+        if (!currentUser) {
+            alert("Будь ласка, увійдіть через Google");
+            return;
+        }
 
-        // Блокування після вибору
-        document.querySelectorAll('.question').forEach(q => {
-            q.addEventListener('change', () => {
-                if (q.querySelector('input[type="radio"]')) lockQuestion(q);
-            });
-        });
-
-        document.getElementById('finish-btn').onclick = () => {
-            const score = calculateScore();
-            if (currentUser) {
-                update(ref(db, 'results/' + currentUser.uid), {
-                    name: currentUser.displayName,
-                    score: score,
-                    finished: true
-                });
-            }
-            alert(`Тест завершено! Ваш результат: ${score} з 12`);
+        update(ref(db, 'results/' + currentUser.uid), {
+            name: currentUser.displayName,
+            score: score,
+            finished: true,
+            timestamp: Date.now()
+        }).then(() => {
+            alert(`Тест завершено! Ваш результат: ${score} з 10 балів`);
             location.reload();
-        };
-    });
+        });
+    };
+
+    // Запуск інтерактиву
+    window.onload = () => {
+        setupDragAndDrop();
+        setupImageSelect();
+
+        // Оновлення прогресу при будь-якій зміні
+        document.addEventListener('change', updateProgress);
+        document.addEventListener('click', updateProgress);
+    };
 </script>
 </body>
 </html>
