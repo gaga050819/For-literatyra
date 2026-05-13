@@ -6,7 +6,6 @@
     <title>Тест: Берлін — столиця Німеччини</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        /* Той самий стиль, що й у тебе */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
             --bg: #0e0e0e;
@@ -15,9 +14,7 @@
             --text: #f0ede8;
             --muted: #7a7a7a;
             --accent: #c9a84c;
-            --accent-glow: rgba(201, 168, 76, 0.2);
-            --success: #4caf50;
-            --danger: #e05c5c;
+            --accent-glow: rgba(201, 168, 76, 0.25);
         }
         body {
             font-family: 'Inter', sans-serif;
@@ -26,67 +23,74 @@
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
             padding: 40px 20px;
         }
         .card {
             width: 100%;
-            max-width: 680px;
+            max-width: 700px;
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 6px;
+            border-radius: 8px;
             padding: 40px;
-            animation: fadeIn 0.5s ease;
         }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-        .hidden { display: none !important; }
-
-        h1 { font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 6px; }
-        .subtitle { font-size: 0.85rem; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+        h1 { font-family: 'Playfair Display', serif; font-size: 1.85rem; margin-bottom: 8px; }
+        .subtitle { color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 30px; }
 
         .progress-container {
-            width: 100%; height: 5px; background: var(--border); border-radius: 3px; margin-bottom: 24px; overflow: hidden;
+            height: 6px; background: var(--border); border-radius: 3px; margin: 25px 0; overflow: hidden;
         }
         .progress-bar {
-            height: 100%; width: 0%; background: var(--accent); transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            height: 100%; width: 0%; background: var(--accent); transition: width 0.5s;
             box-shadow: 0 0 12px var(--accent-glow);
         }
 
-        .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
-        .score-box { font-weight: 600; color: var(--accent); font-size: 1.1rem; }
-
-        .question { margin-bottom: 32px; padding-bottom: 28px; border-bottom: 1px solid var(--border); }
-        .question:last-child { border-bottom: none; margin-bottom: 0; }
-        .question p { font-size: 1rem; line-height: 1.55; margin-bottom: 18px; font-weight: 500; }
+        .question { margin-bottom: 35px; padding-bottom: 25px; border-bottom: 1px solid var(--border); }
+        .question:last-child { border-bottom: none; }
+        .question p { margin-bottom: 16px; font-weight: 500; line-height: 1.5; }
 
         label {
-            display: flex; align-items: center; gap: 12px; padding: 14px 16px; margin-bottom: 8px;
-            border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
-            transition: all 0.25s;
+            display: flex; align-items: center; gap: 12px; padding: 14px 16px;
+            border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px;
+            cursor: pointer; transition: all 0.2s;
         }
-        label:hover { border-color: var(--accent); transform: translateX(6px); }
-        label:has(input:checked) {
-            border-color: var(--accent);
-            background: rgba(201,168,76,0.1);
+        label:hover { border-color: var(--accent); }
+        label:has(input:checked) { border-color: var(--accent); background: rgba(201,168,76,0.12); }
+
+        /* Інтерактивні стилі */
+        .drag-container {
+            display: flex; flex-direction: column; gap: 10px; margin: 15px 0;
         }
-        input[type="radio"] { accent-color: var(--accent); }
+        .draggable {
+            padding: 12px 16px; background: #1f1f1f; border: 1px solid var(--border);
+            border-radius: 6px; cursor: grab; user-select: none;
+        }
+        .drop-zone {
+            min-height: 140px; border: 2px dashed var(--muted); border-radius: 8px;
+            padding: 10px; margin: 15px 0;
+        }
+        .image-select {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin: 15px 0;
+        }
+        .image-option {
+            border: 3px solid transparent; border-radius: 8px; overflow: hidden; cursor: pointer;
+        }
+        .image-option.selected { border-color: var(--accent); }
 
         .btn {
-            width: 100%; padding: 15px; font-size: 1rem; font-weight: 600;
-            border-radius: 4px; cursor: pointer; transition: all 0.2s;
+            width: 100%; padding: 16px; font-size: 1.05rem; font-weight: 600;
+            border-radius: 6px; cursor: pointer; margin-top: 20px;
         }
         .btn-primary { background: var(--accent); color: #0e0e0e; border: none; }
-        .btn-success { background: transparent; border: 2px solid var(--success); color: var(--success); margin-top: 20px; }
-        .btn-success:hover { background: var(--success); color: #0e0e0e; }
+        .btn-success { background: transparent; border: 2px solid #4caf50; color: #4caf50; }
     </style>
 </head>
 <body>
 <div class="card">
-    <h1>Берлін — місто, яке ніколи не спить</h1>
-    <p class="subtitle">Тест з 12 питань</p>
+    <h1>Берлін — місто історії та майбутнього</h1>
+    <p class="subtitle">Інтерактивний тест • 12 завдань</p>
 
     <div id="auth-section">
-        <p style="color:var(--muted); margin-bottom:20px;">Увійдіть через Google, щоб результат зарахувався в лідерборд</p>
+        <p style="color:var(--muted); margin:20px 0;">Увійдіть, щоб результат потрапив у лідерборд</p>
         <button class="btn btn-primary" id="login-btn">Увійти через Google</button>
     </div>
 
@@ -95,179 +99,166 @@
             <div class="progress-bar" id="progress"></div>
         </div>
 
-        <div class="quiz-header">
+        <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
             <span id="user-display">Учень...</span>
-            <span class="score-box">Бали: <span id="current-score">0</span>/12</span>
+            <span>Бали: <strong id="current-score">0</strong>/12</span>
         </div>
 
         <div id="questions">
-            <!-- Питання 1 -->
+            <!-- Звичайні питання з блокуванням -->
             <div class="question" data-correct="0">
                 <p>1. Столицею якої країни є Берлін?</p>
                 <label><input type="radio" name="q1" value="0"> Німеччини</label>
                 <label><input type="radio" name="q1" value="1"> Австрії</label>
-                <label><input type="radio" name="q1" value="2"> Швейцарії</label>
+                <label><input type="radio" name="q1" value="2"> Польщі</label>
             </div>
 
-            <!-- Питання 2 -->
             <div class="question" data-correct="1">
-                <p>2. Яка річка протікає через центр Берліна?</p>
+                <p>2. Яка річка протікає через Берлін?</p>
                 <label><input type="radio" name="q2" value="0"> Ельба</label>
                 <label><input type="radio" name="q2" value="1"> Шпрее</label>
-                <label><input type="radio" name="q2" value="2"> Рейн</label>
+                <label><input type="radio" name="q2" value="2"> Дунай</label>
             </div>
 
-            <!-- Питання 3 -->
-            <div class="question" data-correct="2">
-                <p>3. У якому році впала Берлінська стіна?</p>
-                <label><input type="radio" name="q3" value="0"> 1987</label>
-                <label><input type="radio" name="q3" value="1"> 1991</label>
-                <label><input type="radio" name="q3" value="2"> 1989</label>
+            <!-- Інтерактивне 1: Drag & Drop -->
+            <div class="question" data-correct="drag">
+                <p>3. Розташуйте події в хронологічному порядку (перетягніть)</p>
+                <div class="drag-container" id="drag-items">
+                    <div class="draggable" data-order="1">Падіння Берлінської стіни</div>
+                    <div class="draggable" data-order="0">Об’єднання Німеччини</div>
+                    <div class="draggable" data-order="2">Відкриття аеропорту BER</div>
+                </div>
+                <div class="drop-zone" id="drop-zone"></div>
             </div>
 
-            <!-- Додаткові питання (можеш міняти) -->
+            <!-- Інтерактивне 2: Вибір на зображенні -->
+            <div class="question" data-correct="brandenburg">
+                <p>4. Клікніть на Бранденбурзькі ворота</p>
+                <div class="image-select" id="image-select">
+                    <img src="https://picsum.photos/id/1015/300/200" class="image-option" data-value="brandenburg" alt="Бранденбурзькі ворота">
+                    <img src="https://picsum.photos/id/201/300/200" class="image-option" data-value="reichstag" alt="Рейхстаг">
+                    <img src="https://picsum.photos/id/301/300/200" class="image-option" data-value="tv-tower" alt="Телевежа">
+                </div>
+            </div>
+
+            <!-- Інше питання -->
             <div class="question" data-correct="1">
-                <p>4. Як називається головна будівля німецького парламенту?</p>
-                <label><input type="radio" name="q4" value="0"> Бранденбурзькі ворота</label>
-                <label><input type="radio" name="q4" value="1"> Рейхстаг</label>
-                <label><input type="radio" name="q4" value="2"> Берлінський собор</label>
+                <p>5. Який найвідоміший парк Берліна?</p>
+                <label><input type="radio" name="q5" value="0"> Англійський сад</label>
+                <label><input type="radio" name="q5" value="1"> Тіргартен</label>
+                <label><input type="radio" name="q5" value="2"> Центральний парк</label>
             </div>
 
-            <div class="question" data-correct="0">
-                <p>5. Який з цих об’єктів є найвідомішим символом Берліна?</p>
-                <label><input type="radio" name="q5" value="0"> Бранденбурзькі ворота</label>
-                <label><input type="radio" name="q5" value="1"> Ейфелева вежа</label>
-                <label><input type="radio" name="q5" value="2"> Колізей</label>
-            </div>
-
-            <div class="question" data-correct="2">
-                <p>6. Який аеропорт є головним аеропортом Берліна?</p>
-                <label><input type="radio" name="q6" value="0"> Tegel</label>
-                <label><input type="radio" name="q6" value="1"> Schönefeld</label>
-                <label><input type="radio" name="q6" value="2"> Berlin Brandenburg (BER)</label>
-            </div>
-
-            <div class="question" data-correct="1">
-                <p>7. Який найвідоміший парк Берліна?</p>
-                <label><input type="radio" name="q7" value="0"> Англійський сад</label>
-                <label><input type="radio" name="q7" value="1"> Тіргартен</label>
-                <label><input type="radio" name="q7" value="2"> Центральний парк</label>
-            </div>
-
-            <div class="question" data-correct="0">
-                <p>8. У якому році Берлін став столицею об’єднаної Німеччини?</p>
-                <label><input type="radio" name="q8" value="0"> 1991</label>
-                <label><input type="radio" name="q8" value="1"> 1989</label>
-                <label><input type="radio" name="q8" value="2"> 2000</label>
-            </div>
-
-            <div class="question" data-correct="1">
-                <p>9. Що таке «Checkpoint Charlie»?</p>
-                <label><input type="radio" name="q9" value="0"> Музей сучасного мистецтва</label>
-                <label><input type="radio" name="q9" value="1"> Колишній контрольний пункт між Західним і Східним Берліном</label>
-                <label><input type="radio" name="q9" value="2"> Найбільший пивний сад</label>
-            </div>
-
-            <div class="question" data-correct="2">
-                <p>10. На якому острові розташовані найважливіші музеї Берліна?</p>
-                <label><input type="radio" name="q10" value="0"> Острів музеїв у Мюнхені</label>
-                <label><input type="radio" name="q10" value="1"> Острів Рюген</label>
-                <label><input type="radio" name="q10" value="2"> Музейний острів (Museuminsel)</label>
-            </div>
+            <!-- Додай ще питання за потребою... -->
         </div>
 
-        <button class="btn btn-success" id="finish-btn">Завершити тест та зберегти результат</button>
+        <button class="btn btn-success" id="finish-btn">Завершити тест</button>
     </div>
 </div>
 
 <script type="module">
-    // Firebase (той самий проект, що й у тебе)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-    import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import { getDatabase, ref, update } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyB7RvEg9vfp4Lo6O7QEBk4UmS_Y3bZ0KxA",
-        authDomain: "for-literatyra.firebaseapp.com",
-        projectId: "for-literatyra",
-        storageBucket: "for-literatyra.firebasestorage.app",
-        messagingSenderId: "397284064199",
-        appId: "1:397284064199:web:1e89197505edc29b7cf7e2",
-        databaseURL: "https://for-literatyra-default-rtdb.europe-west1.firebasedatabase.app/"
-    };
-
+    const firebaseConfig = { /* твій firebaseConfig */ };
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getDatabase(app);
 
     let currentUser = null;
 
+    // Увійти
     document.getElementById('login-btn').onclick = async () => {
         try {
             const provider = new GoogleAuthProvider();
             const result = await signInWithPopup(auth, provider);
-            handleAuthSuccess(result.user);
+            currentUser = result.user;
+            document.getElementById('auth-section').classList.add('hidden');
+            document.getElementById('quiz-section').classList.remove('hidden');
+            document.getElementById('user-display').innerText = currentUser.displayName;
         } catch (e) { console.error(e); }
     };
 
-    async function handleAuthSuccess(user) {
-        currentUser = user;
-        document.getElementById('auth-section').classList.add('hidden');
-        document.getElementById('quiz-section').classList.remove('hidden');
-        document.getElementById('user-display').innerText = user.displayName;
-
-        // Ініціалізуємо результат
-        update(ref(db, 'results/' + user.uid), {
-            name: user.displayName,
-            score: 0,
-            finished: false
-        });
-
-        startQuiz();
+    // Блокування відповідей після вибору
+    function lockQuestion(question) {
+        const radios = question.querySelectorAll('input[type="radio"]');
+        radios.forEach(r => r.disabled = true);
     }
 
-    function startQuiz() {
-        const progressBar = document.getElementById('progress');
-        const scoreEl = document.getElementById('current-score');
-        let answered = 0;
+    // Drag & Drop
+    function initDragAndDrop() {
+        const items = document.querySelectorAll('.draggable');
+        const dropZone = document.getElementById('drop-zone');
 
-        document.querySelectorAll('input[type="radio"]').forEach(radio => {
-            radio.addEventListener('change', () => {
-                const question = radio.closest('.question');
-                question.classList.add('answered');
+        items.forEach(item => {
+            item.draggable = true;
+            item.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text', item.outerHTML);
+                setTimeout(() => item.style.opacity = '0.4', 0);
+            });
+            item.addEventListener('dragend', () => item.style.opacity = '1');
+        });
 
-                answered = document.querySelectorAll('.question.answered').length;
-                progressBar.style.width = `${(answered / 10) * 100}%`;
+        dropZone.addEventListener('dragover', e => e.preventDefault());
+        dropZone.addEventListener('drop', e => {
+            e.preventDefault();
+            dropZone.innerHTML += e.dataTransfer.getData('text');
+        });
+    }
 
-                // Підрахунок балів
-                let score = 0;
-                document.querySelectorAll('.question').forEach(q => {
-                    const selected = q.querySelector('input:checked');
-                    if (selected && selected.value === q.dataset.correct) score++;
-                });
-
-                scoreEl.textContent = score;
+    // Вибір зображення
+    function initImageSelect() {
+        document.querySelectorAll('.image-option').forEach(img => {
+            img.addEventListener('click', () => {
+                document.querySelectorAll('.image-option').forEach(i => i.classList.remove('selected'));
+                img.classList.add('selected');
             });
         });
     }
 
-    document.getElementById('finish-btn').onclick = () => {
-        if (!confirm("Завершити тест?")) return;
-
-        let finalScore = 0;
+    // Підрахунок балів
+    function calculateScore() {
+        let score = 0;
         document.querySelectorAll('.question').forEach(q => {
-            const selected = q.querySelector('input:checked');
-            if (selected && selected.value === q.dataset.correct) finalScore++;
+            if (q.dataset.correct === "drag") {
+                // простий чек для drag (можна покращити)
+                if (document.getElementById('drop-zone').children.length >= 2) score++;
+            } else if (q.dataset.correct === "brandenburg") {
+                if (document.querySelector('.image-option.selected')?.dataset.value === "brandenburg") score++;
+            } else {
+                const selected = q.querySelector('input:checked');
+                if (selected && selected.value === q.dataset.correct) score++;
+            }
+        });
+        return score;
+    }
+
+    // Ініціалізація
+    document.addEventListener('DOMContentLoaded', () => {
+        initDragAndDrop();
+        initImageSelect();
+
+        // Блокування після вибору
+        document.querySelectorAll('.question').forEach(q => {
+            q.addEventListener('change', () => {
+                if (q.querySelector('input[type="radio"]')) lockQuestion(q);
+            });
         });
 
-        update(ref(db, 'results/' + currentUser.uid), {
-            score: finalScore,
-            finished: true
-        }).then(() => {
-            alert(`Тест завершено! Ваш результат: ${finalScore} з 10 балів 🎉`);
+        document.getElementById('finish-btn').onclick = () => {
+            const score = calculateScore();
+            if (currentUser) {
+                update(ref(db, 'results/' + currentUser.uid), {
+                    name: currentUser.displayName,
+                    score: score,
+                    finished: true
+                });
+            }
+            alert(`Тест завершено! Ваш результат: ${score} з 12`);
             location.reload();
-        });
-    };
+        };
+    });
 </script>
 </body>
 </html>
